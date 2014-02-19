@@ -273,6 +273,15 @@ if [[ -e centreon-broker-2.5.0.tar.gz ]]
     wget ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
 fi
 
+if [[ -d /var/log/centreon-broker ]]
+  then
+    echo "Directory already exist!"
+  else
+    mkdir /var/log/centreon-broker
+    chown ${BROKER_USER}:${ENGINE_GROUP} /var/log/centreon-broker
+    chmod 775 /var/log/centreon-broker
+fi
+
 tar xzf centreon-broker-${BROKER_VER}.tar.gz
 cd ${DL_DIR}/centreon-broker-${BROKER_VER}/build/
 
