@@ -31,3 +31,6 @@ Test on Debian Wheezy
         Centreon Broker log directory            => /var/log/centreon-broker/
         Retention file directory                 => /var/lib/centreon-broker
         Centreon Broker lib (*.so) directory     => /srv/centreon-broker/lib/centreon-broker/
+
+# Restart cbd
+        service cbd restart
