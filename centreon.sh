@@ -121,7 +121,7 @@ cmake \
 make 
 make install
 
-echo '${INSTALL_DIR}/centreon-lib/lib' >> /etc/ld.so.conf.d/libc.conf
+echo "${INSTALL_DIR}/centreon-lib/lib" >> /etc/ld.so.conf.d/libc.conf
 
 echo "
 ==========================| Step 3 |=================================
