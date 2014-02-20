@@ -1,6 +1,7 @@
 #!/bin/bash
 # Centreon + engine install script for Debian Wheezy
-# Source from http://eric.coquard.free.fr
+# Source https://github.com/zeysh/centreon-install
+# Thanks to Eric http://eric.coquard.free.fr
 #
 # 1 - Fix PHP 5.3 from squeeze repos (Centreon do not support PHP 5.4)
 # 2 - install centreon-clib
