@@ -15,17 +15,17 @@
 ## Versions
 CLIB_VER="1.2.0"
 CONNECTOR_VER="1.0.2"
-ENGINE_VER="1.3.5"
+ENGINE_VER="1.3.7"
 PLUGIN_VER="1.5"
-BROKER_VER="2.5.0"
-CENTREON_VER="2.4.5"
+BROKER_VER="2.6.1"
+CENTREON_VER="2.5.0"
 ## Sources URL
 CLIB_URL="http://download.centreon.com/index.php?id=4299"
 CONNECTOR_URL="http://download.centreon.com/index.php?id=4305"
-ENGINE_URL="http://download.centreon.com/index.php?id=4306"
+ENGINE_URL="http://download.centreon.com/index.php?id=4310"
 PLUGIN_URL="http://assets.nagios.com/downloads/nagiosplugins/nagios-plugins-${PLUGIN_VER}.tar.gz"
-BROKER_URL="http://download.centreon.com/index.php?id=4303"
-CENTREON_URL="http://download.centreon.com/index.php?id=4298"
+BROKER_URL="http://download.centreon.com/index.php?id=4309"
+CENTREON_URL="http://download.centreon.com/index.php?id=4307"
 ## Temp install dir
 DL_DIR="/tmp"
 ## Install dir
