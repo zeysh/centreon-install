@@ -6,7 +6,7 @@ Centreon autoinstall for Debian (with centreon-engine)
 Test on Debian Wheezy
 
 # Default install
-1. Version and URLs
+## Version and URLs
 
 - CLIB_VER="1.2.0"
 - CONNECTOR_VER="1.0.2"
@@ -21,12 +21,12 @@ Test on Debian Wheezy
 - BROKER_URL="http://download.centreon.com/index.php?id=4309"
 - CENTREON_URL="http://download.centreon.com/index.php?id=4307"
 
-2. Temp and install directories
+## Temp and install directories
 
 - DL_DIR="/tmp"
 - INSTALL_DIR="/srv"
 
-3. Users, groups and passwords
+## Users, groups and passwords
 
 - MYSQL_PASSWORD="password"
 - ENGINE_USER="centreon-engine"
@@ -36,7 +36,7 @@ Test on Debian Wheezy
 - CENTREON_USER="centreon"
 - CENTREON_GROUP="centreon"
 
-4. Centreon template install file
+## Centreon template install file
 
 - CENTREON_TMPL="centreon_engine.tmpl"
 
