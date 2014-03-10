@@ -22,10 +22,12 @@ Test on Debian Wheezy
 - CENTREON_URL="http://download.centreon.com/index.php?id=4307"
 
 2. Temp and install directories
+
 - DL_DIR="/tmp"
 - INSTALL_DIR="/srv"
 
 3. Users, groups and passwords
+
 - MYSQL_PASSWORD="password"
 - ENGINE_USER="centreon-engine"
 - ENGINE_GROUP="centreon-engine"
@@ -35,6 +37,7 @@ Test on Debian Wheezy
 - CENTREON_GROUP="centreon"
 
 4. Centreon template install file
+
 - CENTREON_TMPL="centreon_engine.tmpl"
 
 # Usage
