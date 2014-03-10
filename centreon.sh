@@ -317,7 +317,7 @@ echo "mysql-server-5.5 mysql-server/root_password password ${MYSQL_PASSWORD}
 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx mysql-server \
  apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
  php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
- snmp snmpd snmp-mibs-downloader
+ snmp snmpd snmp-mibs-downloader sudo
 
 # Cleanup to prevent space full on /var
 apt-get clean
