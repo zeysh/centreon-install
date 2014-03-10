@@ -350,7 +350,7 @@ useradd -u 6003 -g ${CENTREON_GROUP} -m -r -d ${INSTALL_DIR}/centreon -c "Centre
 tar xzf centreon-${CENTREON_VER}.tar.gz
 cd ${DL_DIR}/centreon-${CENTREON_VER}
 
-./install.sh -i -f /tmp/${CENTREON_TMPL}
+./install.sh -i -f /${DL_DIR}/${CENTREON_TMPL}
 
 # Add mysql config for Centreon
 echo '[mysqld]
