@@ -305,8 +305,8 @@ apt-get install -y librrd-dev libqt4-dev libqt4-sql-mysql
 apt-get clean
 
 cd ${DL_DIR}
-if [[ -e centreon-broker-2.5.0.tar.gz ]]
-  then
+if [[ -e centreon-broker-${BROKER_VER}.tar.gz ]]
+  then 
     echo 'File already exist !'
   else
     wget ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
