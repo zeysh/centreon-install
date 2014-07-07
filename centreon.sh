@@ -3,13 +3,6 @@
 # Source https://github.com/zeysh/centreon-install
 # Thanks to Eric http://eric.coquard.free.fr
 #
-# 1 - Fix PHP 5.3 from squeeze repos (Centreon do not support PHP 5.4)
-# 2 - install centreon-clib
-# 3 - install centreon-connector (Perl and SSH)
-# 4 - install centreon-engine
-# 5 - install nagios-plugins
-# 6 - install centreon-broker
-# 7 - install centreon (web interface)
 
 # Variables
 ## Versions
