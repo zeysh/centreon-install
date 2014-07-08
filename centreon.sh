@@ -251,16 +251,17 @@ chmod +x /etc/init.d/centengine
 update-rc.d centengine defaults
 }
 
+function nagios_plugin_install () {
 echo "
-==========================| Step 5 |=================================
+======================================================================
 
-                    Install Plugins Nagios
+                     Install Plugins Nagios
 
-=====================================================================
+======================================================================
 "
 
-apt-get install -y libgnutls-dev libssl-dev libkrb5-dev libldap2-dev libsnmp-dev gawk \
-        libwrap0-dev libmcrypt-dev smbclient fping gettext dnsutils libmysqlclient-dev \
+apt-get install --force-yes -y libgnutls-dev libssl-dev libkrb5-dev libldap2-dev libsnmp-dev gawk \
+        libwrap0-dev libmcrypt-dev smbclient fping gettext dnsutils libmariadbclient-dev \
         libnet-snmp-perl
 
 # Cleanup to prevent space full on /var
@@ -268,9 +269,9 @@ apt-get clean
 
 cd ${DL_DIR}
 if [[ -e nagios-plugins-${PLUGIN_VER}.tar.gz ]]
-  then 
+  then
     echo 'File already exist !'
-  else 
+  else
     wget ${PLUGIN_URL} -O ${DL_DIR}/nagios-plugins-${PLUGIN_VER}.tar.gz
 fi
 
@@ -281,8 +282,9 @@ cd ${DL_DIR}/nagios-plugins-${PLUGIN_VER}
 --prefix=${INSTALL_DIR}/centreon-plugins --enable-perl-modules --with-openssl=/usr/bin/openssl \
 --enable-extra-opts
 
-make 
+make
 make install
+}
 
 echo "
 ==========================| Step 6 |=================================
