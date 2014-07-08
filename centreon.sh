@@ -149,26 +149,28 @@ cmake \
    -DWITH_SHARED_LIB=1 \
    -DWITH_STATIC_LIB=0 \
    -DWITH_PKGCONFIG_DIR=/usr/lib/pkgconfig .
-make 
+make
 make install
 
 echo "${INSTALL_DIR}/centreon-lib/lib" >> /etc/ld.so.conf.d/libc.conf
+}
 
+function centreon_connectors_install () {
 echo "
-==========================| Step 3 |=================================
+======================================================================
 
-                Install Centreon Perl Connector
+               Install Centreon Perl and SSH connectors
 
-=====================================================================
+======================================================================
 "
 
 apt-get install -y libperl-dev
 
 cd ${DL_DIR}
 if [[ -e centreon-connector-${CONNECTOR_VER}.tar.gz ]]
-  then 
+  then
     echo 'File already exist !'
-  else 
+  else
     wget ${CONNECTOR_URL} -O ${DL_DIR}/centreon-connector-${CONNECTOR_VER}.tar.gz
 fi
 
