@@ -119,22 +119,24 @@ Pin: release a=stable
 Pin-Priority: 600' > /etc/apt/preferences.d/preferences
 
 apt-get update
+}
 
+function clib_install () {
 echo "
-==========================| Step 2 |=================================
+======================================================================
 
-                        Install Clib
+                          Install Clib
 
-=====================================================================
+======================================================================
 "
 
 apt-get install -y build-essential cmake
 
 cd ${DL_DIR}
 if [[ -e centreon-clib-${CLIB_VER}.tar.gz ]] ;
-  then 
+  then
     echo 'File already exist !'
-  else 
+  else
     wget ${CLIB_URL} -O ${DL_DIR}/centreon-clib-${CLIB_VER}.tar.gz
 fi
 
