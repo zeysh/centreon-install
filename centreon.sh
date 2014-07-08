@@ -434,15 +434,18 @@ PEAR_PATH="/usr/share/php"
 EOF
 }
 
-echo "mysql-server-5.5 mysql-server/root_password password ${MYSQL_PASSWORD}
-      mysql-server-5.5 mysql-server/root_password seen true
-      mysql-server-5.5 mysql-server/root_password_again password ${MYSQL_PASSWORD}
-      mysql-server-5.5 mysql-server/root_password_again seen true" | debconf-set-selections
+function centreon_install () {
+echo "
+======================================================================
 
-DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx mysql-server \
+                  Install Centreon Web Interface
+
+======================================================================
+"
+DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
  apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
  php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
- snmp snmpd snmp-mibs-downloader sudo
+ snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite
 
 # Cleanup to prevent space full on /var
 apt-get clean
@@ -450,7 +453,7 @@ apt-get clean
 
 # MIBS errors
 if [[ -d /root/mibs_removed ]]
-  then 
+  then
     echo 'MIBS already moved !'
   else
     mkdir /root/mibs_removed
@@ -463,7 +466,7 @@ fi
 cd ${DL_DIR}
 
 if [[ -e centreon-${CENTREON_VER}.tar.gz ]]
-  then 
+  then
     echo 'File already exist!'
   else
     wget ${CENTREON_URL} -O ${DL_DIR}/centreon-${CENTREON_VER}.tar.gz
@@ -471,11 +474,15 @@ fi
 
 groupadd -g 6003 ${CENTREON_GROUP}
 useradd -u 6003 -g ${CENTREON_GROUP} -m -r -d ${INSTALL_DIR}/centreon -c "Centreon Web user" ${CENTREON_USER}
+usermod -aG ${CENTREON_GROUP} ${ENGINE_USER}
 
 tar xzf centreon-${CENTREON_VER}.tar.gz
 cd ${DL_DIR}/centreon-${CENTREON_VER}
 
-./install.sh -i -f /${DL_DIR}/${CENTREON_TMPL}
+echo " Generate Centreon template "
+
+./install.sh -i -f ${DL_DIR}/${CENTREON_TMPL}
+}
 
 # Add mysql config for Centreon
 echo '[mysqld]
