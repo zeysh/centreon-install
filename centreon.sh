@@ -85,13 +85,14 @@ debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_pass
 apt-get install --force-yes -y mariadb-server
 }
 
+function php3_install () {
 echo "
-==========================| Step 1 |=================================
+======================================================================
 
-        Add Squeeze repo for php 5.3 on Wheezy
-        At the moment Centreon doesn't support PHP 5.4
+           Add Squeeze repo for php 5.3 on Wheezy
+           At the moment Centreon doesn't support PHP 5.4
 
-=====================================================================
+======================================================================
 "
 
 echo 'deb http://ftp.fr.debian.org/debian/ squeeze main non-free
