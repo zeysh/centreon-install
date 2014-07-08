@@ -53,20 +53,37 @@ function text_params () {
   STATUS_OK="[$COL_GREEN${bold} OK ${normal}$COL_RESET]"
 }
 
+function mariadb_install() {
 echo "
-======================| Install details |=============================
+======================================================================
 
-                Clib       : ${CLIB_VER}
-                Connector  : ${CONNECTOR_VER}
-                Engine     : ${ENGINE_VER}
-                Plugin     : ${PLUGIN_VER}
-                Broker     : ${BROKER_VER}
-                Centreon   : ${CENTREON_VER}
-                Install dir: ${INSTALL_DIR}
-                Source dir : ${DL_DIR}
+                        Install MariaDB
 
-=====================================================================
- "
+======================================================================
+"
+DISTRO=`lsb_release -i -s | tr '[:upper:]' '[:lower:]'`
+RELEASE=`lsb_release -c -s`
+
+apt-get install -y lsb-release python-software-properties
+
+MIRROR_DOMAIN='ftp.igh.cnrs.fr'
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+add-apt-repository "deb http://${MIRROR_DOMAIN}/pub/mariadb/repo/${MARIADB_VER}/${DISTRO} ${RELEASE} main"
+apt-get update
+
+# Pin repository in order to avoid conflicts with MySQL from distribution
+# repository. See https://mariadb.com/kb/en/installing-mariadb-deb-files
+# section "Version Mismatch Between MariaDB and Ubuntu/Debian Repositories"
+echo "
+Package: *
+Pin: origin ${MIRROR_DOMAIN}
+Pin-Priority: 1000
+" | tee /etc/apt/preferences.d/mariadb
+
+debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_password password ${MYSQL_PASSWORD}"
+debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_password_again password ${MYSQL_PASSWORD}"
+apt-get install --force-yes -y mariadb-server
+}
 
 echo "
 ==========================| Step 1 |=================================
