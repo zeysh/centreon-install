@@ -510,3 +510,26 @@ chmod 775 /var/lib/centreon-broker/
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
 }
+
+##ADDONS
+
+function clapi_install () {
+echo "
+=======================================================================
+
+                          Install CLAPI
+
+=======================================================================
+"
+cd ${DL_DIR}
+  if [[ -e ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz ]]
+    then
+      echo 'File already exist!'
+    else
+      wget ${CLAPI_URL} -O ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
+      tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
+  fi
+    cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
+    CENTREON_CONF=${CENTREON_ETC} || ./install.sh -i
+}
+
