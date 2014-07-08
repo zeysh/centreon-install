@@ -19,9 +19,10 @@ MARIADB_VER='5.5'
 CLIB_URL="http://download.centreon.com/index.php?id=4299"
 CONNECTOR_URL="http://download.centreon.com/index.php?id=4305"
 ENGINE_URL="http://download.centreon.com/index.php?id=4310"
-PLUGIN_URL="http://assets.nagios.com/downloads/nagiosplugins/nagios-plugins-${PLUGIN_VER}.tar.gz"
-BROKER_URL="http://download.centreon.com/index.php?id=4309"
-CENTREON_URL="http://download.centreon.com/index.php?id=4307"
+PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz"
+BROKER_URL="http://download.centreon.com/index.php?id=4315"
+CENTREON_URL="http://download.centreon.com/index.php?id=4314"
+CLAPI_URL="http://download.centreon.com/index.php?id=4296"
 ## Temp install dir
 DL_DIR="/tmp"
 ## Install dir
