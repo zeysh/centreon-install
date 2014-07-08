@@ -24,7 +24,7 @@ BROKER_URL="http://download.centreon.com/index.php?id=4315"
 CENTREON_URL="http://download.centreon.com/index.php?id=4314"
 CLAPI_URL="http://download.centreon.com/index.php?id=4296"
 ## Temp install dir
-DL_DIR="/tmp"
+DL_DIR="/usr/local/src"
 ## Install dir
 INSTALL_DIR="/srv"
 ## Set mysql-server root password
