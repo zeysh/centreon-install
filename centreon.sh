@@ -484,11 +484,23 @@ echo " Generate Centreon template "
 ./install.sh -i -f ${DL_DIR}/${CENTREON_TMPL}
 }
 
+function post_install () {
+echo "
+=====================================================================
+
+                          Post install
+
+=====================================================================
+"
 # Add mysql config for Centreon
 echo '[mysqld]
 innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
 
 service mysql restart
+service cbd restart
+service centcore restart
+service centengine restart
+service centreontrapd restart
 
 ## Workarounds
 ## config:  cannot open '/var/lib/centreon-broker/module-temporary.tmp-1-central-module-output-master-failover'
@@ -497,3 +509,4 @@ chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
+}
