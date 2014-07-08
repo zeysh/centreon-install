@@ -533,3 +533,105 @@ cd ${DL_DIR}
     CENTREON_CONF=${CENTREON_ETC} || ./install.sh -i
 }
 
+function main () {
+echo "
+=======================| Install details |============================
+
+                  MariaDB    : ${MARIADB_VER}
+                  Clib       : ${CLIB_VER}
+                  Connector  : ${CONNECTOR_VER}
+                  Engine     : ${ENGINE_VER}
+                  Plugin     : ${PLUGIN_VER}
+                  Broker     : ${BROKER_VER}
+                  Centreon   : ${CENTREON_VER}
+                  Install dir: ${INSTALL_DIR}
+                  Source dir : ${DL_DIR}
+
+======================================================================
+"
+text_params
+
+mariadb_install > ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_OK}"
+fi
+
+php3_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step2${normal}  => Install PHP3 on Wheezy                                ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step2${normal}  => Install PHP3 on Wheezy                                ${STATUS_OK}"
+fi
+clib_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_OK}"
+fi
+centreon_connectors_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_OK}"
+fi
+centreon_engine_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_OK}"
+fi
+nagios_plugin_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_OK}"
+fi
+centreon_broker_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_OK}"
+fi
+create_centreon_tmpl >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_OK}"
+fi
+centreon_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_OK}"
+fi
+post_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_OK}"
+fi
+clapi_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_OK}"
+fi
+}
+# Exec main function
+main
+echo -e ""
+echo -e "${bold}Go to http://${ETH0_IP}/centreon to complete the setup${normal} "
+echo -e ""
