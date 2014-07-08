@@ -286,17 +286,18 @@ make
 make install
 }
 
+function centreon_broker_install() {
 echo "
-==========================| Step 6 |=================================
+======================================================================
 
-                   Install Centreon Broker
+                     Install Centreon Broker
 
-=====================================================================
+======================================================================
 "
 
 groupadd -g 6002 ${BROKER_GROUP}
 useradd -u 6002 -g ${BROKER_GROUP} -m -r -d /var/lib/centreon-broker -c "Centreon-broker Admin" ${BROKER_USER}
-usermod -aG ${BROKER_USER} ${ENGINE_GROUP}
+usermod -aG ${BROKER_GROUP} ${ENGINE_USER}
 
 apt-get install -y librrd-dev libqt4-dev libqt4-sql-mysql
 
@@ -305,7 +306,7 @@ apt-get clean
 
 cd ${DL_DIR}
 if [[ -e centreon-broker-2.5.0.tar.gz ]]
-  then 
+  then
     echo 'File already exist !'
   else
     wget ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
@@ -337,6 +338,7 @@ update-rc.d cbd defaults
 
 # Cleanup to prevent space full on /var
 apt-get clean
+}
 
 echo "
 ==========================| Step 7 |=================================
