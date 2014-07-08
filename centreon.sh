@@ -42,7 +42,17 @@ CENTREON_GROUP="centreon"
 CENTREON_TMPL="centreon_engine.tmpl"
 ETH0_IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
 
-# BEGIN
+function text_params () {
+  ESC_SEQ="\x1b["
+  bold=`tput bold`
+  normal=`tput sgr0`
+  COL_RESET=$ESC_SEQ"39;49;00m"
+  COL_GREEN=$ESC_SEQ"32;01m"
+  COL_RED=$ESC_SEQ"31;01m"
+  STATUS_FAIL="[$COL_RED${bold}FAIL${normal}$COL_RESET]"
+  STATUS_OK="[$COL_GREEN${bold} OK ${normal}$COL_RESET]"
+}
+
 echo "
 ======================| Install details |=============================
 
