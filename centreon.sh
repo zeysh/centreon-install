@@ -200,13 +200,15 @@ cmake \
  -DWITH_TESTING=0 .
 make
 make install
+}
 
+function centreon_engine_install () {
 echo "
-==========================| Step 4 |=================================
+======================================================================
 
-                   Install Centreon Engine
+                    Install Centreon Engine
 
-=====================================================================
+======================================================================
 "
 
 groupadd -g 6001 ${ENGINE_GROUP}
@@ -219,9 +221,9 @@ apt-get clean
 
 cd ${DL_DIR}
 if [[ -e centreon-engine-${ENGINE_VER}.tar.gz ]]
-  then 
+  then
     echo 'File already exist !'
-  else 
+  else
     wget ${ENGINE_URL} -O ${DL_DIR}/centreon-engine-${ENGINE_VER}.tar.gz
 fi
 
@@ -247,6 +249,7 @@ make install
 
 chmod +x /etc/init.d/centengine
 update-rc.d centengine defaults
+}
 
 echo "
 ==========================| Step 5 |=================================
