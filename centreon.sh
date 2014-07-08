@@ -26,7 +26,9 @@ CLAPI_URL="http://download.centreon.com/index.php?id=4296"
 ## Temp install dir
 DL_DIR="/usr/local/src"
 ## Install dir
-INSTALL_DIR="/srv"
+INSTALL_DIR="/usr/local"
+## Log install file
+INSTALL_LOG="/usr/local/src/centreon-install.log"
 ## Set mysql-server root password
 MYSQL_PASSWORD="password"
 ## Users and groups
