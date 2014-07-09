@@ -7,13 +7,13 @@ Tested on Debian Wheezy
 
 # Default install
 ## Version and URLs
-CLIB_VER="1.2.0"
-CONNECTOR_VER="1.0.2"
-ENGINE_VER="1.3.7"
-PLUGIN_VER="2.0.3"
-BROKER_VER="2.6.2"
-CENTREON_VER="2.5.1"
-CLAPI_VER="1.5.2"
+- CLIB_VER="1.2.0"
+- CONNECTOR_VER="1.0.2"
+- ENGINE_VER="1.3.7"
+- PLUGIN_VER="2.0.3"
+- BROKER_VER="2.6.2"
+- CENTREON_VER="2.5.1"
+- CLAPI_VER="1.5.2"
 
 ## Temp and install directories
 
