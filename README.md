@@ -33,9 +33,10 @@ Tested on Debian Wheezy
 # Usage
 
  Change your vars at the beginning of the script
- sudo ./centreon.sh
- http://localhost/centreon/
- Enjoy!
+
+        sudo ./centreon.sh
+
+        http://localhost/centreon/
 
 # Complete the web install
 
