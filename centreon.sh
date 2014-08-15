@@ -6,23 +6,23 @@
 
 # Variables
 ## Versions
-CLIB_VER="1.2.0"
-CONNECTOR_VER="1.0.2"
-ENGINE_VER="1.3.7"
+CLIB_VER="1.4.0"
+CONNECTOR_VER="1.0.3"
+ENGINE_VER="1.4.4"
 PLUGIN_VER="2.0.3"
 BROKER_VER="2.6.2"
 CENTREON_VER="2.5.1"
-CLAPI_VER="1.5.2"
+CLAPI_VER="1.6.0"
 # MariaDB Series
 MARIADB_VER='5.5'
 ## Sources URL
-CLIB_URL="http://download.centreon.com/index.php?id=4299"
-CONNECTOR_URL="http://download.centreon.com/index.php?id=4305"
-ENGINE_URL="http://download.centreon.com/index.php?id=4310"
+CLIB_URL="http://download.centreon.com/index.php?id=4318"
+CONNECTOR_URL="http://download.centreon.com/index.php?id=4317"
+ENGINE_URL="http://download.centreon.com/index.php?id=4316"
 PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz"
 BROKER_URL="http://download.centreon.com/index.php?id=4315"
 CENTREON_URL="http://download.centreon.com/index.php?id=4314"
-CLAPI_URL="http://download.centreon.com/index.php?id=4296"
+CLAPI_URL="http://download.centreon.com/index.php?id=4319"
 ## Temp install dir
 DL_DIR="/usr/local/src"
 ## Install dir
