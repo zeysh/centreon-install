@@ -23,6 +23,17 @@ PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.
 BROKER_URL="http://download.centreon.com/index.php?id=4315"
 CENTREON_URL="http://download.centreon.com/index.php?id=4314"
 CLAPI_URL="http://download.centreon.com/index.php?id=4319"
+## Sources widgets
+WIDGET_VER="1.0.0"
+WIDGET_HOST_VER="1.1.2"
+WIDGET_HOSTGROUP_VER="1.1.1"
+WIDGET_SERVICE_VER="1.1.2"
+WIDGET_SERVICEGROUP_VER="1.1.0"
+WIDGET="https://forge.centreon.com/attachments/download/1508/centreon-widgets-${WIDGET_VER}.tar.gz"
+WIDGET_HOST="http://download.centreon.com/centreon-widgets/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
+WIDGET_HOSTGROUP="http://download.centreon.com/centreon-widgets/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
+WIDGET_SERVICE="http://download.centreon.com/centreon-widgets/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
+WIDGET_SERVICEGROUP="http://download.centreon.com/centreon-widgets/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
 ## Temp install dir
 DL_DIR="/usr/local/src"
 ## Install dir
@@ -533,6 +544,22 @@ cd ${DL_DIR}
     CENTREON_CONF=${CENTREON_ETC} || ./install.sh -i
 }
 
+function widget_install() {
+echo "
+=======================================================================
+
+                         Install WIDGETS
+
+=======================================================================
+"
+cd ${DL_DIR}
+  wget -qO- ${WIDGET} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xvz
+  wget -qO- ${WIDGET_HOST} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
+  wget -qO- ${WIDGET_HOSTGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
+  wget -qO- ${WIDGET_SERVICE} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
+  wget -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
+}
+
 function main () {
 echo "
 =======================| Install details |============================
@@ -629,6 +656,16 @@ if [[ $? -ne 0 ]];
   else
     echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_OK}"
 fi
+
+widget_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step12${normal} => Widgets install                                       ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step12${normal} => Widgets install                                       ${STATUS_OK}"
+fi
+echo ""
+echo "##### Install completed #####" >> ${INSTALL_LOG} 2>&1
 }
 # Exec main function
 main
