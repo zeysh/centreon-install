@@ -3,7 +3,7 @@
 # Source https://github.com/zeysh/centreon-install
 # Thanks to Eric http://eric.coquard.free.fr
 #
-
+export DEBIAN_FRONTEND=noninteractive
 # Variables
 ## Versions
 CLIB_VER="1.4.0"
