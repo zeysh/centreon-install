@@ -72,10 +72,10 @@ echo "
 
 ======================================================================
 "
+apt-get install -y lsb-release python-software-properties
 DISTRO=`lsb_release -i -s | tr '[:upper:]' '[:lower:]'`
 RELEASE=`lsb_release -c -s`
 
-apt-get install -y lsb-release python-software-properties
 
 MIRROR_DOMAIN='ftp.igh.cnrs.fr'
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
