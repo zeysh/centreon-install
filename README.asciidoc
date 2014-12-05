@@ -48,7 +48,7 @@ http://localhost/centreon/
 | Centreon Engine var lib directory        | /var/lib/centreon-engine
 | Centreon Engine Connector path           | /usr/local/centreon-connector
 | Centreon Engine Library (*.so) directory | /usr/local/centreon-engine/lib/centreon-engine/
-| Embedded Perl initialisation file        | zfefzf
+| Embedded Perl initialisation file        |
 |===
 
 == Broker Module Information
