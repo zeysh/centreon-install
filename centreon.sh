@@ -560,6 +560,27 @@ cd ${DL_DIR}
   wget -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
 }
 
+function centreon_plugins_install() {
+echo "
+=======================================================================
+
+                    Install Centreon Plugins
+
+=======================================================================
+"
+cd ${DL_DIR}
+apt-get install libcache-memcached-perl libjson-perl libxml-libxml-perl libdatetime-perl git-core
+git clone http://git.centreon.com/centreon-plugins.git
+cd centreon-plugins
+chmod +x centreon_plugins.pl
+chown -R ${ENGINE_USER}:${ENGINE_GROUP} ${DL_DIR}/centreon-plugins
+cp -R * ${INSTALL_DIR}/centreon-plugins/libexec/
+}
+
+
+
+
+
 function main () {
 echo "
 =======================| Install details |============================
@@ -620,6 +641,13 @@ if [[ $? -ne 0 ]];
     echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_FAIL}"
   else
     echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_OK}"
+fi
+centreon_plugins_install >> ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_OK}"
 fi
 centreon_broker_install >> ${INSTALL_LOG} 2>&1
 if [[ $? -ne 0 ]];
