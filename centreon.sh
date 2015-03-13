@@ -16,24 +16,24 @@ CLAPI_VER="1.6.1"
 # MariaDB Series
 MARIADB_VER='5.5'
 ## Sources URL
-CLIB_URL="http://download.centreon.com/index.php?id=4600"
-CONNECTOR_URL="http://download.centreon.com/index.php?id=4601"
-ENGINE_URL="http://download.centreon.com/index.php?id=4599"
+BASE_URL="https://s3-eu-west-1.amazonaws.com/centreon-download/public"
+CLIB_URL="${BASE_URL}/centreon-clib/centreon-clib-${CLIB_VER}.tar.gz"
+CONNECTOR_URL="${BASE_URL}/centreon-connectors/centreon-connector-${CONNECTOR_VER}.tar.gz"
+ENGINE_URL="${BASE_URL}/centreon-engine/centreon-engine-${ENGINE_VER}.tar.gz"
 PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz"
-BROKER_URL="http://download.centreon.com/index.php?id=4608"
-CENTREON_URL="http://download.centreon.com/index.php?id=4607"
-CLAPI_URL="http://download.centreon.com/index.php?id=4596"
+BROKER_URL="${BASE_URL}/centreon-broker/centreon-broker-${BROKER_VER}.tar.gz"
+CENTREON_URL="${BASE_URL}/centreon/centreon-${CENTREON_VER}.tar.gz"
+CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
 ## Sources widgets
-WIDGET_VER="1.0.0"
 WIDGET_HOST_VER="1.2.1"
 WIDGET_HOSTGROUP_VER="1.1.1"
 WIDGET_SERVICE_VER="1.2.1"
 WIDGET_SERVICEGROUP_VER="1.1.0"
-WIDGET="https://forge.centreon.com/attachments/download/1508/centreon-widgets-${WIDGET_VER}.tar.gz"
-WIDGET_HOST="http://download.centreon.com/centreon-widgets/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
-WIDGET_HOSTGROUP="http://download.centreon.com/centreon-widgets/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
-WIDGET_SERVICE="http://download.centreon.com/centreon-widgets/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
-WIDGET_SERVICEGROUP="http://download.centreon.com/centreon-widgets/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
+WIDGET_BASE="https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets"
+WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
+WIDGET_HOSTGROUP="${WIDGET_BASE}/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
+WIDGET_SERVICE="${WIDGET_BASE}/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
+WIDGET_SERVICEGROUP="${WIDGET_BASE}/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
 ## Temp install dir
 DL_DIR="/usr/local/src"
 ## Install dir
@@ -553,7 +553,6 @@ echo "
 =======================================================================
 "
 cd ${DL_DIR}
-  wget -qO- ${WIDGET} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xvz
   wget -qO- ${WIDGET_HOST} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
   wget -qO- ${WIDGET_HOSTGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
   wget -qO- ${WIDGET_SERVICE} | tar -C ${INSTALL_DIR}/centreon/www/widgets -xzv
