@@ -568,7 +568,7 @@ echo "
 =======================================================================
 "
 cd ${DL_DIR}
-apt-get install libcache-memcached-perl libjson-perl libxml-libxml-perl libdatetime-perl git-core
+DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes libcache-memcached-perl libjson-perl libxml-libxml-perl libdatetime-perl git-core
 git clone http://git.centreon.com/centreon-plugins.git
 cd centreon-plugins
 chmod +x centreon_plugins.pl
