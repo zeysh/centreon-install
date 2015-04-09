@@ -14,7 +14,7 @@ BROKER_VER="2.8.1"
 CENTREON_VER="2.5.4"
 CLAPI_VER="1.7.1"
 # MariaDB Series
-MARIADB_VER='5.5'
+MARIADB_VER='10.0'
 ## Sources URL
 BASE_URL="https://s3-eu-west-1.amazonaws.com/centreon-download/public"
 CLIB_URL="${BASE_URL}/centreon-clib/centreon-clib-${CLIB_VER}.tar.gz"
@@ -541,7 +541,7 @@ cd ${DL_DIR}
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
   fi
     cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
-    CENTREON_CONF=${CENTREON_ETC} || ./install.sh -i
+    ./install.sh -u ${CENTREON_ETC}
 }
 
 function widget_install() {
