@@ -8,13 +8,13 @@ export DEBIAN_FRONTEND=noninteractive
 ## Versions
 CLIB_VER="1.4.2"
 CONNECTOR_VER="1.1.1"
-ENGINE_VER="1.4.8"
+ENGINE_VER="1.4.11"
 PLUGIN_VER="2.0.3"
-BROKER_VER="2.7.0"
+BROKER_VER="2.8.1"
 CENTREON_VER="2.5.4"
-CLAPI_VER="1.6.1"
+CLAPI_VER="1.7.1"
 # MariaDB Series
-MARIADB_VER='5.5'
+MARIADB_VER='10.0'
 ## Sources URL
 BASE_URL="https://s3-eu-west-1.amazonaws.com/centreon-download/public"
 CLIB_URL="${BASE_URL}/centreon-clib/centreon-clib-${CLIB_VER}.tar.gz"
@@ -25,9 +25,9 @@ BROKER_URL="${BASE_URL}/centreon-broker/centreon-broker-${BROKER_VER}.tar.gz"
 CENTREON_URL="${BASE_URL}/centreon/centreon-${CENTREON_VER}.tar.gz"
 CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
 ## Sources widgets
-WIDGET_HOST_VER="1.2.1"
+WIDGET_HOST_VER="1.3.2"
 WIDGET_HOSTGROUP_VER="1.1.1"
-WIDGET_SERVICE_VER="1.2.1"
+WIDGET_SERVICE_VER="1.3.2"
 WIDGET_SERVICEGROUP_VER="1.1.0"
 WIDGET_BASE="https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets"
 WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
@@ -541,7 +541,7 @@ cd ${DL_DIR}
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
   fi
     cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
-    CENTREON_CONF=${CENTREON_ETC} || ./install.sh -i
+    ./install.sh -u ${CENTREON_ETC}
 }
 
 function widget_install() {
