@@ -541,7 +541,7 @@ cd ${DL_DIR}
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
   fi
     cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
-    ./install.sh -u ${CENTREON_ETC}
+    ./install.sh -u `grep CENTREON_ETC ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"`
 }
 
 function widget_install() {
