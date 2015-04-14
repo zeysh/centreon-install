@@ -566,6 +566,11 @@ cd ${DL_DIR}
   chown -R ${CENTREON_USER}:${CENTREON_GROUP} ${INSTALL_DIR}/centreon/www/widgets
   wget -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   wget -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
+  # Added to fix a bug in Nagvis authentication
+  cat >> ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis/sql/install.sql << 'EOF'
+INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_auth', 'single');
+INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_single_user', 'centreon_nagvis');
+EOF
   chown -R `grep WEB_USER ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"`:`grep WEB_GROUP ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"` ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis
 }
 
