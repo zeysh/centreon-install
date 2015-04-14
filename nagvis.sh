@@ -165,6 +165,8 @@ echo "
 
 =====================================================================
 "
+# Update www-data user to allow access to /var/lib/centreon-engine/rw/live
+usermod -aG centreon-engine ${WEB_USER}
 # Fix permissions
 chown -R ${WEB_USER}:${WEB_GROUP} ${NAGVIS_DIR}
 chmod -R o-rwx ${NAGVIS_DIR}
