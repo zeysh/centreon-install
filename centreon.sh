@@ -13,7 +13,7 @@ PLUGIN_VER="2.0.3"
 BROKER_VER="2.8.1"
 CENTREON_VER="2.5.4"
 CLAPI_VER="1.7.1"
-NAGVIS_VER="1.1"
+NAGVIS_MOD_VER="1.1"
 # MariaDB Series
 MARIADB_VER='10.0'
 ## Sources URL
@@ -25,7 +25,7 @@ PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.
 BROKER_URL="${BASE_URL}/centreon-broker/centreon-broker-${BROKER_VER}.tar.gz"
 CENTREON_URL="${BASE_URL}/centreon/centreon-${CENTREON_VER}.tar.gz"
 CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
-NAGVIS_URL="${BASE_URL}/Modules/centreon-nagvis/centreon-nagvis-${NAGVIS_VER}.tar.gz"
+NAGVIS_MOD_URL="${BASE_URL}/Modules/centreon-nagvis/centreon-nagvis-${NAGVIS_MOD_VER}.tar.gz"
 ## Sources widgets
 WIDGET_HOST_VER="1.3.2"
 WIDGET_HOSTGROUP_VER="1.1.1"
@@ -36,6 +36,7 @@ WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host
 WIDGET_HOSTGROUP="${WIDGET_BASE}/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
 WIDGET_SERVICE="${WIDGET_BASE}/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
 WIDGET_SERVICEGROUP="${WIDGET_BASE}/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
+WIDGET_GRAPH="${WIDGET_BASE}/centreon-widget-graph-monitoring/centreon-widget-graph-monitoring-${WIDGET_GRAPH_VER}.tar.gz"
 ## Temp install dir
 DL_DIR="/usr/local/src"
 ## Install dir
@@ -562,7 +563,8 @@ cd ${DL_DIR}
   mkdir ${INSTALL_DIR}/centreon/www/widgets/servicegroup-monitoring
   wget -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets/servicegroup-monitoring --strip-components 1 -xzv
   chown -R ${CENTREON_USER}:${CENTREON_GROUP} ${INSTALL_DIR}/centreon/www/widgets
-  wget -qO- ${NAGVIS_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_VER}/www --strip-components 3 -xzv
+  wget -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
   chown -R `grep WEB_USER ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"`:`grep WEB_GROUP ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"` ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis
 }
 
