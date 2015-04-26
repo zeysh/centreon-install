@@ -114,19 +114,19 @@ deb-src http://security.debian.org/ squeeze/updates main non-free' > /etc/apt/so
 
 # Fix version PHP5.3 on Wheezy
 echo 'Package: php5*
-Pin: release a=oldstable
+Pin: release a=squeeze
 Pin-Priority: 700
 
 Package: libapache2-mod-php5
-Pin: release a=oldstable
+Pin: release a=squeeze
 Pin-Priority: 700
 
 Package: php-pear
-Pin: release a=oldstable
+Pin: release a=squeeze
 Pin-Priority: 700
 
 Package: *
-Pin: release a=stable
+Pin: release a=wheezy
 Pin-Priority: 600' > /etc/apt/preferences.d/preferences
 
 apt-get update
