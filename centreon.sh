@@ -109,25 +109,18 @@ echo "
 echo 'deb http://ftp.fr.debian.org/debian/ squeeze main non-free
 deb-src http://ftp.fr.debian.org/debian/ squeeze main non-free
 
-deb http://security.debian.org/ squeeze/updates main non-free
-deb-src http://security.debian.org/ squeeze/updates main non-free' > /etc/apt/sources.list.d/squeeze.list
+# Security was merged to main, using LTS now
+deb http://http.debian.net/debian/ squeeze-lts main non-free
+deb-src http://http.debian.net/debian/ squeeze-lts main non-free' > /etc/apt/sources.list.d/squeeze.list
 
 # Fix version PHP5.3 on Wheezy
-echo 'Package: php5*
-Pin: release a=oldstable
+echo 'Package: php5* libapache2-mod-php5 php-pear
+Pin: release n=squeeze-lts
 Pin-Priority: 700
 
-Package: libapache2-mod-php5
-Pin: release a=oldstable
-Pin-Priority: 700
-
-Package: php-pear
-Pin: release a=oldstable
-Pin-Priority: 700
-
-Package: *
-Pin: release a=stable
-Pin-Priority: 600' > /etc/apt/preferences.d/preferences
+Package: php5* libapache2-mod-php5 php-pear
+Pin: release n=squeeze
+Pin-Priority: 700' > /etc/apt/preferences.d/preferences
 
 apt-get update
 }
