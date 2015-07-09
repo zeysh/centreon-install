@@ -8,10 +8,10 @@ export DEBIAN_FRONTEND=noninteractive
 ## Versions
 CLIB_VER="1.4.2"
 CONNECTOR_VER="1.1.1"
-ENGINE_VER="1.4.11"
+ENGINE_VER="1.4.14"
 PLUGIN_VER="2.0.3"
-BROKER_VER="2.8.1"
-CENTREON_VER="2.5.4"
+BROKER_VER="2.8.2"
+CENTREON_VER="2.6.1"
 CLAPI_VER="1.7.1"
 NAGVIS_MOD_VER="1.1"
 # MariaDB Series
@@ -621,13 +621,13 @@ if [[ $? -ne 0 ]];
     echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_OK}"
 fi
 
-php53_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_OK}"
-fi
+#php53_install >> ${INSTALL_LOG} 2>&1
+#if [[ $? -ne 0 ]];
+#  then
+#    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_FAIL}"
+#  else
+#    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_OK}"
+#fi
 clib_install >> ${INSTALL_LOG} 2>&1
 if [[ $? -ne 0 ]];
   then
