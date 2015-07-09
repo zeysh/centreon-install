@@ -30,7 +30,7 @@ Tested on Debian Wheezy
 
 == Users, groups and passwords
 
-- MYSQL_PASSWORD="password"     # Better to update it to something more difficult.
+- MYSQL_PASSWORD="password"     *# Better to update it to something more difficult.*
 - ENGINE_USER="centreon-engine"
 - ENGINE_GROUP="centreon-engine"
 - BROKER_USER="centreon-broker"
