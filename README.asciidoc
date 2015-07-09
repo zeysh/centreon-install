@@ -8,10 +8,10 @@ Tested on Debian Wheezy
 == Versions
 - CLIB_VER="1.4.2"
 - CONNECTOR_VER="1.1.1"
-- ENGINE_VER="1.4.11"
+- ENGINE_VER="1.4.14"
 - PLUGIN_VER="2.0.3"
-- BROKER_VER="2.8.1"
-- CENTREON_VER="2.5.4"
+- BROKER_VER="2.8.2"
+- CENTREON_VER="2.6.1"
 - CLAPI_VER="1.7.1"
 - NAGVIS_MOD_VER="1.1"
 
@@ -30,7 +30,7 @@ Tested on Debian Wheezy
 
 == Users, groups and passwords
 
-- MYSQL_PASSWORD="password"
+- MYSQL_PASSWORD="password"     # Better to update it to something more difficult.
 - ENGINE_USER="centreon-engine"
 - ENGINE_GROUP="centreon-engine"
 - BROKER_USER="centreon-broker"
@@ -56,7 +56,7 @@ http://localhost/centreon/
 | Centreon Engine Stats binary             | /usr/local/centreon-engine/bin/centenginestats
 | Centreon Engine var lib directory        | /var/lib/centreon-engine
 | Centreon Engine Connector path           | /usr/local/centreon-connector
-| Centreon Engine Library (*.so) directory | /usr/local/centreon-engine/lib/centreon-engine/
+| Centreon Engine Library (*.so) directory | /usr/local/centreon-engine/lib/centreon-engine
 | Embedded Perl initialisation file        |
 |===
 
@@ -66,9 +66,9 @@ http://localhost/centreon/
 |Broker Module                        | centreon-broker
 |Centreon Broker etc directory        | /usr/local/centreon-broker/etc
 |Centreon Broker module (cbmod.so)    | /usr/local/centreon-broker/lib/cbmod.so
-|Centreon Broker log directory        | /var/log/centreon-broker/
+|Centreon Broker log directory        | /var/log/centreon-broker
 |Retention file directory             | /var/lib/centreon-broker
-|Centreon Broker lib (*.so) directory | /usr/local/centreon-broker/lib/centreon-broker/
+|Centreon Broker lib (*.so) directory | /usr/local/centreon-broker/lib/centreon-broker
 |===
 
 === After the web wizard
