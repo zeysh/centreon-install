@@ -1,23 +1,23 @@
 #!/bin/bash
-# Centreon + engine install script for Debian Wheezy
-# Source https://github.com/zeysh/centreon-install
+# Centreon + engine install script for Debian Wheezy and Jessie
+# Source https://github.com/zeysh/centreon-install and https://github.com/GreenCom-Networks/centreon-install
 # Thanks to Eric http://eric.coquard.free.fr
 #
 export DEBIAN_FRONTEND=noninteractive
 # Variables
 ## Versions
-CLIB_VER="1.4.2"
-CONNECTOR_VER="1.1.1"
-ENGINE_VER="1.4.14"
-PLUGIN_VER="2.0.3"
-BROKER_VER="2.9.2"
-CENTREON_VER="2.6.1"
-CLAPI_VER="1.7.1"
-NAGVIS_MOD_VER="1.1.1"
+CLIB_VER='1.4.2'
+CONNECTOR_VER='1.1.1'
+ENGINE_VER='1.4.14'
+PLUGIN_VER='2.0.3'
+BROKER_VER='2.9.1'
+CENTREON_VER='2.6.1'
+CLAPI_VER='1.7.1'
+NAGVIS_MOD_VER='1.1.1'
 # MariaDB Series
-MARIADB_VER='10.0'
+MARIADB_VER='10.1'
 ## Sources URL
-BASE_URL="https://s3-eu-west-1.amazonaws.com/centreon-download/public"
+BASE_URL='https://s3-eu-west-1.amazonaws.com/centreon-download/public'
 CLIB_URL="${BASE_URL}/centreon-clib/centreon-clib-${CLIB_VER}.tar.gz"
 CONNECTOR_URL="${BASE_URL}/centreon-connectors/centreon-connector-${CONNECTOR_VER}.tar.gz"
 ENGINE_URL="${BASE_URL}/centreon-engine/centreon-engine-${ENGINE_VER}.tar.gz"
@@ -27,35 +27,52 @@ CENTREON_URL="${BASE_URL}/centreon/centreon-${CENTREON_VER}.tar.gz"
 CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
 NAGVIS_MOD_URL="${BASE_URL}/Modules/centreon-nagvis/centreon-nagvis-${NAGVIS_MOD_VER}.tar.gz"
 ## Sources widgets
-WIDGET_HOST_VER="1.3.2"
-WIDGET_HOSTGROUP_VER="1.1.1"
-WIDGET_SERVICE_VER="1.3.2"
-WIDGET_SERVICEGROUP_VER="1.1.0"
-WIDGET_GRAPH_VER="1.1.0"
-WIDGET_BASE="https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets"
+WIDGET_HOST_VER='1.3.2'
+WIDGET_HOSTGROUP_VER='1.1.1'
+WIDGET_SERVICE_VER='1.3.2'
+WIDGET_SERVICEGROUP_VER='1.1.0'
+WIDGET_GRAPH_VER='1.1.0'
+WIDGET_BASE='https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets'
 WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
 WIDGET_HOSTGROUP="${WIDGET_BASE}/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
 WIDGET_SERVICE="${WIDGET_BASE}/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
 WIDGET_SERVICEGROUP="${WIDGET_BASE}/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
 WIDGET_GRAPH="${WIDGET_BASE}/centreon-widget-graph-monitoring/centreon-widget-graph-monitoring-${WIDGET_GRAPH_VER}.tar.gz"
 ## Temp install dir
-DL_DIR="/usr/local/src"
+DL_DIR='/usr/local/src'
 ## Install dir
-INSTALL_DIR="/usr/local"
+INSTALL_DIR='/usr/local'
 ## Log install file
-INSTALL_LOG="/usr/local/src/centreon-install.log"
+INSTALL_LOG='/usr/local/src/centreon-install.log'
 ## Set mysql-server root password
-MYSQL_PASSWORD="password"
+MYSQL_PASSWORD='YOUR_PASSWORD'
 ## Users and groups
-ENGINE_USER="centreon-engine"
-ENGINE_GROUP="centreon-engine"
-BROKER_USER="centreon-broker"
-BROKER_GROUP="centreon-broker"
-CENTREON_USER="centreon"
-CENTREON_GROUP="centreon"
+ENGINE_USER='centreon-engine'
+ENGINE_GROUP='centreon-engine'
+BROKER_USER='centreon-broker'
+BROKER_GROUP='centreon-broker'
+CENTREON_USER='centreon'
+CENTREON_GROUP='centreon'
 ## TMPL file (template install file for Centreon)
-CENTREON_TMPL="centreon_engine.tmpl"
+CENTREON_TMPL='centreon_engine.tmpl'
 ETH0_IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+
+# Set some variables to support Debian 7 and 8
+case `cat /etc/debian_version` in
+    7\.[0-9] )
+        DEBVERS='wheezy'
+        echo 'Debian Wheezy'
+        gnutlsdev='libgnutls-dev'
+        dir_apache_conf='/etc/apache2/conf.d'
+    ;;
+
+    8\.[0-9] )
+        DEBVERS='jessie'
+        echo 'Debian Jessie'
+        gnutlsdev='libgnutls28-dev'
+        dir_apache_conf='/etc/apache2/conf-available'
+    ;;
+esac
 
 function text_params () {
   ESC_SEQ="\x1b["
@@ -69,13 +86,13 @@ function text_params () {
 }
 
 function mariadb_install() {
-echo "
+echo '
 ======================================================================
 
                         Install MariaDB
 
 ======================================================================
-"
+'
 apt-get install -y lsb-release python-software-properties
 DISTRO=`lsb_release -i -s | tr '[:upper:]' '[:lower:]'`
 RELEASE=`lsb_release -c -s`
@@ -83,7 +100,7 @@ RELEASE=`lsb_release -c -s`
 
 MIRROR_DOMAIN='ftp.igh.cnrs.fr'
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-add-apt-repository "deb http://${MIRROR_DOMAIN}/pub/mariadb/repo/${MARIADB_VER}/${DISTRO} ${RELEASE} main"
+echo "deb http://${MIRROR_DOMAIN}/pub/mariadb/repo/${MARIADB_VER}/${DISTRO} ${RELEASE} main" > /etc/apt/sources.list.d/mariadb.list
 apt-get update
 
 # Pin repository in order to avoid conflicts with MySQL from distribution
@@ -104,7 +121,7 @@ function php53_install () {
 echo "
 ======================================================================
 
-           Add Squeeze repo for php 5.3 on Wheezy
+           Add Squeeze repo for php 5.3 on Wheezy !! NOT USED ANYMORE !!
            At the moment Centreon doesn't support PHP 5.4
 
 ======================================================================
@@ -137,20 +154,20 @@ apt-get update
 }
 
 function clib_install () {
-echo "
+echo '
 ======================================================================
 
                           Install Clib
 
 ======================================================================
-"
+'
 
 apt-get install -y build-essential cmake
 
 cd ${DL_DIR}
 if [[ -e centreon-clib-${CLIB_VER}.tar.gz ]] ;
   then
-    echo 'File already exist !'
+    echo 'File already exists !'
   else
     wget ${CLIB_URL} -O ${DL_DIR}/centreon-clib-${CLIB_VER}.tar.gz
 fi
@@ -171,20 +188,20 @@ echo "${INSTALL_DIR}/centreon-lib/lib" >> /etc/ld.so.conf.d/libc.conf
 }
 
 function centreon_connectors_install () {
-echo "
+echo '
 ======================================================================
 
                Install Centreon Perl and SSH connectors
 
 ======================================================================
-"
+'
 
 apt-get install -y libperl-dev
 
 cd ${DL_DIR}
 if [[ -e centreon-connector-${CONNECTOR_VER}.tar.gz ]]
   then
-    echo 'File already exist !'
+    echo 'File already exists !'
   else
     wget ${CONNECTOR_URL} -O ${DL_DIR}/centreon-connector-${CONNECTOR_VER}.tar.gz
 fi
@@ -218,13 +235,13 @@ make install
 }
 
 function centreon_engine_install () {
-echo "
+echo '
 ======================================================================
 
                     Install Centreon Engine
 
 ======================================================================
-"
+'
 
 groupadd -g 6001 ${ENGINE_GROUP}
 useradd -u 6001 -g ${ENGINE_GROUP} -m -r -d /var/lib/centreon-engine -c "Centreon-engine Admin" ${ENGINE_USER}
@@ -237,7 +254,7 @@ apt-get clean
 cd ${DL_DIR}
 if [[ -e centreon-engine-${ENGINE_VER}.tar.gz ]]
   then
-    echo 'File already exist !'
+    echo 'File already exists !'
   else
     wget ${ENGINE_URL} -O ${DL_DIR}/centreon-engine-${ENGINE_VER}.tar.gz
 fi
@@ -267,15 +284,15 @@ update-rc.d centengine defaults
 }
 
 function nagios_plugin_install () {
-echo "
+echo '
 ======================================================================
 
                      Install Plugins Nagios
 
 ======================================================================
-"
+'
 
-apt-get install --force-yes -y libgnutls-dev libssl-dev libkrb5-dev libldap2-dev libsnmp-dev gawk \
+apt-get install --force-yes -y $gnutlsdev libssl-dev libkrb5-dev libldap2-dev libsnmp-dev gawk \
         libwrap0-dev libmcrypt-dev smbclient fping gettext dnsutils libmariadbclient-dev \
         libnet-snmp-perl
 
@@ -285,7 +302,7 @@ apt-get clean
 cd ${DL_DIR}
 if [[ -e nagios-plugins-${PLUGIN_VER}.tar.gz ]]
   then
-    echo 'File already exist !'
+    echo 'File already exists !'
   else
     wget ${PLUGIN_URL} -O ${DL_DIR}/nagios-plugins-${PLUGIN_VER}.tar.gz
 fi
@@ -302,13 +319,13 @@ make install
 }
 
 function centreon_broker_install() {
-echo "
+echo '
 ======================================================================
 
                      Install Centreon Broker
 
 ======================================================================
-"
+'
 
 groupadd -g 6002 ${BROKER_GROUP}
 useradd -u 6002 -g ${BROKER_GROUP} -m -r -d /var/lib/centreon-broker -c "Centreon-broker Admin" ${BROKER_USER}
@@ -322,14 +339,14 @@ apt-get clean
 cd ${DL_DIR}
 if [[ -e centreon-broker-${BROKER_VER}.tar.gz ]]
   then 
-    echo 'File already exist !'
+    echo 'File already exists !'
   else
     wget ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
 fi
 
 if [[ -d /var/log/centreon-broker ]]
   then
-    echo "Directory already exist!"
+    echo 'Directory already exists !'
   else
     mkdir /var/log/centreon-broker
     chown ${BROKER_USER}:${ENGINE_GROUP} /var/log/centreon-broker
@@ -356,13 +373,13 @@ apt-get clean
 }
 
 function create_centreon_tmpl() {
-echo "
+echo '
 ======================================================================
 
                   Centreon template generation
 
 ======================================================================
-"
+'
 cat > ${DL_DIR}/${CENTREON_TMPL} << EOF
 #Centreon template
 PROCESS_CENTREON_WWW=1
@@ -373,9 +390,9 @@ PROCESS_CENTREON_SNMP_TRAPS=1
 
 LOG_DIR="$BASE_DIR/log"
 LOG_FILE="$LOG_DIR/install_centreon.log"
-TMPDIR="/tmp/centreon-setup"
-SNMP_ETC="/etc/snmp/"
-PEAR_MODULES_LIST="pear.lst"
+TMPDIR='/tmp/centreon-setup'
+SNMP_ETC='/etc/snmp/'
+PEAR_MODULES_LIST='pear.lst'
 PEAR_AUTOINST=1
 
 INSTALL_DIR_CENTREON="${INSTALL_DIR}/centreon"
@@ -384,15 +401,15 @@ CENTREON_DATADIR="${INSTALL_DIR}/centreon/data"
 CENTREON_USER=${CENTREON_USER}
 CENTREON_GROUP=${CENTREON_GROUP}
 PLUGIN_DIR="${INSTALL_DIR}/centreon-plugins/libexec"
-CENTREON_LOG="/var/log/centreon"
+CENTREON_LOG='/var/log/centreon'
 CENTREON_ETC="/etc/centreon"
-CENTREON_RUNDIR="/var/run/centreon"
-CENTREON_GENDIR="/var/cache/centreon"
-CENTSTORAGE_RRD="/var/lib/centreon"
+CENTREON_RUNDIR='/var/run/centreon'
+CENTREON_GENDIR='/var/cache/centreon'
+CENTSTORAGE_RRD='/var/lib/centreon'
 CENTSTORAGE_BINDIR="${INSTALL_DIR}/centreon/bin"
 CENTCORE_BINDIR="${INSTALL_DIR}/centreon/bin"
-CENTREON_VARLIB="/var/lib/centreon"
-CENTPLUGINS_TMP="/var/lib/centreon/centplugins"
+CENTREON_VARLIB='/var/lib/centreon'
+CENTPLUGINS_TMP='/var/lib/centreon/centplugins'
 CENTPLUGINSTRAPS_BINDIR="${INSTALL_DIR}/centreon/bin"
 SNMPTT_BINDIR="${INSTALL_DIR}/centreon/bin"
 CENTCORE_INSTALL_INIT=1
@@ -406,8 +423,8 @@ CENTREONTRAPD_INSTALL_RUNLVL=1
 INSTALL_DIR_NAGIOS="${INSTALL_DIR}/centreon-engine"
 CENTREON_ENGINE_USER="${ENGINE_USER}"
 MONITORINGENGINE_USER="${CENTREON_USER}"
-MONITORINGENGINE_LOG="/var/log/centreon-engine"
-MONITORINGENGINE_INIT_SCRIPT="/etc/init.d/centengine"
+MONITORINGENGINE_LOG='/var/log/centreon-engine'
+MONITORINGENGINE_INIT_SCRIPT='/etc/init.d/centengine'
 MONITORINGENGINE_BINARY="${INSTALL_DIR}/centreon-engine/bin/centengine"
 MONITORINGENGINE_ETC="${INSTALL_DIR}/centreon-engine/etc"
 NAGIOS_PLUGIN="${INSTALL_DIR}/centreon-plugins/libexec"
@@ -416,47 +433,47 @@ NAGIOS_GROUP="${CENTREON_USER}"
 FORCE_NAGIOS_GROUP=1
 NDOMOD_BINARY="${INSTALL_DIR}/centreon-broker/bin/cbd"
 NDO2DB_BINARY="${INSTALL_DIR}/centreon-broker/bin/cbd"
-NAGIOS_INIT_SCRIPT="/etc/init.d/centengine"
-CENTREON_ENGINE_CONNECTORS="/usr/lib/centreon-connector"
+NAGIOS_INIT_SCRIPT='/etc/init.d/centengine'
+CENTREON_ENGINE_CONNECTORS='/usr/lib/centreon-connector'
 BROKER_USER="${BROKER_USER}"
 BROKER_ETC="${INSTALL_DIR}/centreon-broker/etc"
-BROKER_INIT_SCRIPT="/etc/init.d/cbd"
-BROKER_LOG="/var/log/centreon-broker"
+BROKER_INIT_SCRIPT='/etc/init.d/cbd'
+BROKER_LOG='/var/log/centreon-broker'
 
-DIR_APACHE="/etc/apache2"
-DIR_APACHE_CONF="/etc/apache2/conf.d"
-APACHE_CONF="apache.conf"
+DIR_APACHE='/etc/apache2'
+DIR_APACHE_CONF="${dir_apache_conf}"
+APACHE_CONF='apache.conf'
 WEB_USER="www-data"
 WEB_GROUP="www-data"
 APACHE_RELOAD=1
-BIN_RRDTOOL="/usr/bin/rrdtool"
-BIN_MAIL="/usr/bin/mail"
-BIN_SSH="/usr/bin/ssh"
-BIN_SCP="/usr/bin/scp"
-PHP_BIN="/usr/bin/php"
-GREP="/bin/grep"
-CAT="/bin/cat"
-SED="/bin/sed"
-CHMOD="/bin/chmod"
-CHOWN="/bin/chown"
+BIN_RRDTOOL='/usr/bin/rrdtool'
+BIN_MAIL='/usr/bin/mail'
+BIN_SSH='/usr/bin/ssh'
+BIN_SCP='/usr/bin/scp'
+PHP_BIN='/usr/bin/php'
+GREP='/bin/grep'
+CAT='/bin/cat'
+SED='/bin/sed'
+CHMOD='/bin/chmod'
+CHOWN='/bin/chown'
 
-RRD_PERL="/usr/lib/perl5"
-SUDO_FILE="/etc/sudoers"
+RRD_PERL='/usr/lib/perl5'
+SUDO_FILE='/etc/sudoers'
 FORCE_SUDO_CONF=1
-INIT_D="/etc/init.d"
-CRON_D="/etc/cron.d"
-PEAR_PATH="/usr/share/php"
+INIT_D='/etc/init.d'
+CRON_D='/etc/cron.d'
+PEAR_PATH='/usr/share/php'
 EOF
 }
 
 function centreon_install () {
-echo "
+echo '
 ======================================================================
 
                   Install Centreon Web Interface
 
 ======================================================================
-"
+'
 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
  apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
  php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
@@ -482,7 +499,7 @@ cd ${DL_DIR}
 
 if [[ -e centreon-${CENTREON_VER}.tar.gz ]]
   then
-    echo 'File already exist!'
+    echo 'File already exists !'
   else
     wget ${CENTREON_URL} -O ${DL_DIR}/centreon-${CENTREON_VER}.tar.gz
 fi
@@ -494,19 +511,19 @@ usermod -aG ${CENTREON_GROUP} ${ENGINE_USER}
 tar xzf centreon-${CENTREON_VER}.tar.gz
 cd ${DL_DIR}/centreon-${CENTREON_VER}
 
-echo " Generate Centreon template "
+echo ' Generate Centreon template '
 
 ./install.sh -i -f ${DL_DIR}/${CENTREON_TMPL}
 }
 
 function post_install () {
-echo "
+echo '
 =====================================================================
 
                           Post install
 
 =====================================================================
-"
+'
 # Add mysql config for Centreon
 echo '[mysqld]
 innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
@@ -516,6 +533,24 @@ service cbd restart
 service centcore restart
 service centengine restart
 service centreontrapd restart
+
+# Workarounds for apache2 on Debian 8
+if [ "$DEBVERS" == "jessie" ]
+then
+
+    cat > $dir_apache_conf/centreon.conf << EOF
+##
+## Section add by Centreon Install Setup <modified by script>
+##
+
+Alias /centreon $INSTALL_DIR/centreon/www/
+<Directory "$INSTALL_DIR/centreon/www">
+    Options Indexes
+    AllowOverride AuthConfig Options
+    Require all granted
+</Directory>
+EOF
+fi
 
 ## Workarounds
 ## config:  cannot open '/var/lib/centreon-broker/module-temporary.tmp-1-central-module-output-master-failover'
@@ -529,17 +564,17 @@ chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
 ##ADDONS
 
 function clapi_install () {
-echo "
+echo '
 =======================================================================
 
                           Install CLAPI
 
 =======================================================================
-"
+'
 cd ${DL_DIR}
   if [[ -e ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz ]]
     then
-      echo 'File already exist!'
+      echo 'File already exists !'
     else
       wget ${CLAPI_URL} -O ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
@@ -549,13 +584,13 @@ cd ${DL_DIR}
 }
 
 function widget_install() {
-echo "
+echo '
 =======================================================================
 
                          Install WIDGETS and NAGVIS
 
 =======================================================================
-"
+'
 cd ${DL_DIR}
   wget -qO- ${WIDGET_HOST} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   mkdir ${INSTALL_DIR}/centreon/www/widgets/hostgroup-monitoring
@@ -566,7 +601,7 @@ cd ${DL_DIR}
   chown -R ${CENTREON_USER}:${CENTREON_GROUP} ${INSTALL_DIR}/centreon/www/widgets
   wget -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   wget -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
-  # Added to fix a bug in Nagvis authentication
+  # Added to fix a bug in nagvis module
   cat >> ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis/sql/install.sql << 'EOF'
 INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_auth', 'single');
 INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_single_user', 'centreon_nagvis');
@@ -575,16 +610,16 @@ EOF
 }
 
 function centreon_plugins_install() {
-echo "
+echo '
 =======================================================================
 
                     Install Centreon Plugins
 
 =======================================================================
-"
+'
 cd ${DL_DIR}
 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes libcache-memcached-perl libjson-perl libxml-libxml-perl libdatetime-perl git-core
-git clone http://git.centreon.com/centreon-plugins.git
+git clone https://github.com/centreon/centreon-plugins.git
 cd centreon-plugins
 chmod +x centreon_plugins.pl
 chown -R ${ENGINE_USER}:${ENGINE_GROUP} ${DL_DIR}/centreon-plugins
@@ -621,7 +656,7 @@ if [[ $? -ne 0 ]];
     echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_OK}"
 fi
 
-#php53_install >> ${INSTALL_LOG} 2>&1
+#php53_install >> ${INSTALL_LOG} 2>&1   # No more needed
 #if [[ $? -ne 0 ]];
 #  then
 #    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_FAIL}"
@@ -711,6 +746,6 @@ echo "##### Install completed #####" >> ${INSTALL_LOG} 2>&1
 }
 # Exec main function
 main
-echo -e ""
+echo -e ''
 echo -e "${bold}Go to http://${ETH0_IP}/centreon to complete the setup${normal} "
-echo -e ""
+echo -e ''
