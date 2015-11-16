@@ -3,25 +3,25 @@ centreon-install
 
 Centreon autoinstall for Debian (with centreon-engine)
 
-Tested on Debian Wheezy
+Tested on Debian Wheezy and Jessie
 
 == Versions
 - CLIB_VER='1.4.2'
-- CONNECTOR_VER='1.1.1'
-- ENGINE_VER='1.4.14'
+- CONNECTOR_VER='1.1.2'
+- ENGINE_VER='1.4.15'
 - PLUGIN_VER='2.0.3'
-- BROKER_VER='2.9.2'
-- CENTREON_VER='2.6.1'
-- CLAPI_VER='1.7.1'
+- BROKER_VER='2.10.1'
+- CENTREON_VER='2.6.6'
+- CLAPI_VER='1.8.0'
 - NAGVIS_MOD_VER='1.1.1'
 
 - MARIADB_VER='10.1'
 
 - WIDGET_HOST_VER='1.3.2'
-- WIDGET_HOSTGROUP_VER='1.1.1'
+- WIDGET_HOSTGROUP_VER='1.2.1'
 - WIDGET_SERVICE_VER='1.3.2'
-- WIDGET_SERVICEGROUP_VER='1.1.0'
-- WIDGET_GRAPH_VER='1.1.0'
+- WIDGET_SERVICEGROUP_VER='1.2.1'
+- WIDGET_GRAPH_VER='1.2.0'
 
 == Temp and install directories
 
