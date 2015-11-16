@@ -7,12 +7,12 @@ export DEBIAN_FRONTEND=noninteractive
 # Variables
 ## Versions
 CLIB_VER='1.4.2'
-CONNECTOR_VER='1.1.1'
-ENGINE_VER='1.4.14'
+CONNECTOR_VER='1.1.2'
+ENGINE_VER='1.4.15'
 PLUGIN_VER='2.0.3'
-BROKER_VER='2.9.1'
-CENTREON_VER='2.6.1'
-CLAPI_VER='1.7.1'
+BROKER_VER='2.10.1'
+CENTREON_VER='2.6.6'
+CLAPI_VER='1.8.0'
 NAGVIS_MOD_VER='1.1.1'
 # MariaDB Series
 MARIADB_VER='10.1'
@@ -28,10 +28,10 @@ CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
 NAGVIS_MOD_URL="${BASE_URL}/Modules/centreon-nagvis/centreon-nagvis-${NAGVIS_MOD_VER}.tar.gz"
 ## Sources widgets
 WIDGET_HOST_VER='1.3.2'
-WIDGET_HOSTGROUP_VER='1.1.1'
+WIDGET_HOSTGROUP_VER='1.2.1'
 WIDGET_SERVICE_VER='1.3.2'
-WIDGET_SERVICEGROUP_VER='1.1.0'
-WIDGET_GRAPH_VER='1.1.0'
+WIDGET_SERVICEGROUP_VER='1.2.1'
+WIDGET_GRAPH_VER='1.2.0'
 WIDGET_BASE='https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets'
 WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
 WIDGET_HOSTGROUP="${WIDGET_BASE}/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
