@@ -246,7 +246,7 @@ echo '
 groupadd -g 6001 ${ENGINE_GROUP}
 useradd -u 6001 -g ${ENGINE_GROUP} -m -r -d /var/lib/centreon-engine -c "Centreon-engine Admin" ${ENGINE_USER}
 
-apt-get install -y libcgsi-gsoap-dev zlib1g-dev libssl-dev libxerces-c-dev
+apt-get install -y libcgsi-gsoap-dev zlib1g-dev libssl-dev libxerces-c-dev libsnmp-perl
 
 # Cleanup to prevent space full on /var
 apt-get clean
