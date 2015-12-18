@@ -45,7 +45,7 @@ INSTALL_DIR='/usr/local'
 ## Log install file
 INSTALL_LOG='/usr/local/src/centreon-install.log'
 ## Set mysql-server root password
-MYSQL_PASSWORD='1DY0xlys3f6U+HP'
+MYSQL_PASSWORD='YOUR_PASSWORD'
 ## Users and groups
 ENGINE_USER='centreon-engine'
 ENGINE_GROUP='centreon-engine'
