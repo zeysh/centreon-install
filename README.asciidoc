@@ -8,10 +8,10 @@ Tested on Debian Wheezy and Jessie
 == Versions
 - CLIB_VER='1.4.2'
 - CONNECTOR_VER='1.1.2'
-- ENGINE_VER='1.4.15'
+- ENGINE_VER='1.5.0'
 - PLUGIN_VER='2.1.1'
-- BROKER_VER='2.10.1'
-- CENTREON_VER='2.6.6'
+- BROKER_VER='2.11.0'
+- CENTREON_VER='2.7.0'
 - CLAPI_VER='1.8.0'
 - NAGVIS_MOD_VER='1.1.1'
 
@@ -30,7 +30,7 @@ Tested on Debian Wheezy and Jessie
 
 == Users, groups and passwords
 
-- MYSQL_PASSWORD="password"     *# Better to update it to something more difficult.*
+- MYSQL_PASSWORD="YOUR_PASSWORD"     *# Better to update it to something more difficult.*
 - ENGINE_USER="centreon-engine"
 - ENGINE_GROUP="centreon-engine"
 - BROKER_USER="centreon-broker"

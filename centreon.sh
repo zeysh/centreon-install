@@ -8,10 +8,10 @@ export DEBIAN_FRONTEND=noninteractive
 ## Versions
 CLIB_VER='1.4.2'
 CONNECTOR_VER='1.1.2'
-ENGINE_VER='1.4.15'
+ENGINE_VER='1.5.0'
 PLUGIN_VER='2.1.1'
-BROKER_VER='2.10.1'
-CENTREON_VER='2.6.6'
+BROKER_VER='2.11.0'
+CENTREON_VER='2.7.0'
 CLAPI_VER='1.8.0'
 NAGVIS_MOD_VER='1.1.1'
 # MariaDB Series
@@ -23,7 +23,7 @@ CONNECTOR_URL="${BASE_URL}/centreon-connectors/centreon-connector-${CONNECTOR_VE
 ENGINE_URL="${BASE_URL}/centreon-engine/centreon-engine-${ENGINE_VER}.tar.gz"
 PLUGIN_URL="http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz"
 BROKER_URL="${BASE_URL}/centreon-broker/centreon-broker-${BROKER_VER}.tar.gz"
-CENTREON_URL="${BASE_URL}/centreon/centreon-${CENTREON_VER}.tar.gz"
+CENTREON_URL="${BASE_URL}/centreon/centreon-web-${CENTREON_VER}.tar.gz"
 CLAPI_URL="${BASE_URL}/Modules/CLAPI/centreon-clapi-${CLAPI_VER}.tar.gz"
 NAGVIS_MOD_URL="${BASE_URL}/Modules/centreon-nagvis/centreon-nagvis-${NAGVIS_MOD_VER}.tar.gz"
 ## Sources widgets
@@ -477,7 +477,7 @@ echo '
 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
  apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
  php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
- snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite
+ snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite php5-intl
 
 # Cleanup to prevent space full on /var
 apt-get clean
@@ -497,19 +497,19 @@ fi
 
 cd ${DL_DIR}
 
-if [[ -e centreon-${CENTREON_VER}.tar.gz ]]
+if [[ -e centreon-web-${CENTREON_VER}.tar.gz ]]
   then
     echo 'File already exists !'
   else
-    wget ${CENTREON_URL} -O ${DL_DIR}/centreon-${CENTREON_VER}.tar.gz
+    wget ${CENTREON_URL} -O ${DL_DIR}/centreon-web-${CENTREON_VER}.tar.gz
 fi
 
 groupadd -g 6003 ${CENTREON_GROUP}
 useradd -u 6003 -g ${CENTREON_GROUP} -m -r -d ${INSTALL_DIR}/centreon -c "Centreon Web user" ${CENTREON_USER}
 usermod -aG ${CENTREON_GROUP} ${ENGINE_USER}
 
-tar xzf centreon-${CENTREON_VER}.tar.gz
-cd ${DL_DIR}/centreon-${CENTREON_VER}
+tar xzf centreon-web-${CENTREON_VER}.tar.gz
+cd ${DL_DIR}/centreon-web-${CENTREON_VER}
 
 echo ' Generate Centreon template '
 
@@ -559,6 +559,11 @@ chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
+
+# Workaround for error with Graph Monitoring widget
+# PHP Fatal error: Call to undefined method DB_Error::fetchRow() in /usr/local/centreon/www/class/centreonGMT.class.php on line 298
+/bin/sed -i '292i\        if (!isset($sid)) {\n            return 0;\n        }\n' ${INSTALL_DIR}/centreon/www/class/centreonGMT.class.php
+
 }
 
 ##ADDONS
