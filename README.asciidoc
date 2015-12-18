@@ -4,6 +4,7 @@ centreon-install
 Centreon autoinstall for Debian (with centreon-engine)
 
 Tested on Debian Wheezy and Jessie
+
 Now enjoy the new Centreon Web 2.7 interface :)
 
 == Versions
