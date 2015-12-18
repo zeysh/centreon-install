@@ -559,6 +559,11 @@ chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
+
+# Workaround for error with Graph Monitoring widget
+# PHP Fatal error: Call to undefined method DB_Error::fetchRow() in /usr/local/centreon/www/class/centreonGMT.class.php on line 298
+/bin/sed -i '292i\        if (!isset($sid)) {\n            return 0;\n        }\n' ${INSTALL_DIR}/centreon/www/class/centreonGMT.class.php
+
 }
 
 ##ADDONS
