@@ -13,8 +13,8 @@ Now enjoy the new Centreon Web 2.7 interface :)
 - ENGINE_VER='1.5.0'
 - PLUGIN_VER='2.1.1'
 - BROKER_VER='2.11.0'
-- CENTREON_VER='2.7.0'
-- CLAPI_VER='1.8.0'
+- CENTREON_VER='2.7.1'
+- CLAPI_VER='1.8.0'     *# Not installed anymore (embedded with Centreon Web).* 
 - NAGVIS_MOD_VER='1.1.1'
 
 - MARIADB_VER='10.1'
@@ -24,6 +24,12 @@ Now enjoy the new Centreon Web 2.7 interface :)
 - WIDGET_SERVICE_VER='1.4.0'
 - WIDGET_SERVICEGROUP_VER='1.3.0'
 - WIDGET_GRAPH_VER='1.3.0'
+- WIDGET_TOP10_CPU_VER='1.0.0'
+- WIDGET_TOP10_MEM_VER='1.0.0'
+- WIDGET_ENGINE_STATUS_VER='1.0.0'
+- WIDGET_GRID_MAP_VER='1.0.0'
+- WIDGET_HTTP_LOADER_VER='1.0.0'
+- WIDGET_TACTICAL_OVERVIEW_VER='1.0.0'
 
 == Temp and install directories
 
@@ -33,12 +39,12 @@ Now enjoy the new Centreon Web 2.7 interface :)
 == Users, groups and passwords
 
 - MYSQL_PASSWORD="YOUR_PASSWORD"     *# Better to update it to something more difficult.*
-- ENGINE_USER="centreon-engine"
-- ENGINE_GROUP="centreon-engine"
-- BROKER_USER="centreon-broker"
-- BROKER_GROUP="centreon-broker"
-- CENTREON_USER="centreon"
-- CENTREON_GROUP="centreon"
+- ENGINE_USER='centreon-engine'
+- ENGINE_GROUP='centreon-engine'
+- BROKER_USER='centreon-broker'
+- BROKER_GROUP='centreon-broker'
+- CENTREON_USER='centreon'
+- CENTREON_GROUP='centreon'
 
 == Usage
 
