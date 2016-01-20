@@ -129,8 +129,6 @@ debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_pass
 apt-get install --force-yes -y mariadb-server
 }
 
-}
-
 function clib_install () {
 echo '
 ======================================================================
