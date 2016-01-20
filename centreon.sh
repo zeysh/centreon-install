@@ -11,7 +11,7 @@ CONNECTOR_VER='1.1.2'
 ENGINE_VER='1.5.0'
 PLUGIN_VER='2.1.1'
 BROKER_VER='2.11.0'
-CENTREON_VER='2.7.0'
+CENTREON_VER='2.7.1'
 CLAPI_VER='1.8.0'
 NAGVIS_MOD_VER='1.1.1'
 # MariaDB Series
@@ -32,12 +32,24 @@ WIDGET_HOSTGROUP_VER='1.3.0'
 WIDGET_SERVICE_VER='1.4.0'
 WIDGET_SERVICEGROUP_VER='1.3.0'
 WIDGET_GRAPH_VER='1.3.0'
+WIDGET_TOP10_CPU_VER='1.0.0'
+WIDGET_TOP10_MEM_VER='1.0.0'
+WIDGET_ENGINE_STATUS_VER='1.0.0'
+WIDGET_GRID_MAP_VER='1.0.0'
+WIDGET_HTTP_LOADER_VER='1.0.0'
+WIDGET_TACTICAL_OVERVIEW_VER='1.0.0'
 WIDGET_BASE='https://s3-eu-west-1.amazonaws.com/centreon-download/public/centreon-widgets'
 WIDGET_HOST="${WIDGET_BASE}/centreon-widget-host-monitoring/centreon-widget-host-monitoring-${WIDGET_HOST_VER}.tar.gz"
 WIDGET_HOSTGROUP="${WIDGET_BASE}/centreon-widget-hostgroup-monitoring/centreon-widget-hostgroup-monitoring-${WIDGET_HOSTGROUP_VER}.tar.gz"
 WIDGET_SERVICE="${WIDGET_BASE}/centreon-widget-service-monitoring/centreon-widget-service-monitoring-${WIDGET_SERVICE_VER}.tar.gz"
 WIDGET_SERVICEGROUP="${WIDGET_BASE}/centreon-widget-servicegroup-monitoring/centreon-widget-servicegroup-monitoring-${WIDGET_SERVICEGROUP_VER}.tar.gz"
 WIDGET_GRAPH="${WIDGET_BASE}/centreon-widget-graph-monitoring/centreon-widget-graph-monitoring-${WIDGET_GRAPH_VER}.tar.gz"
+WIDGET_TOP10_CPU="${WIDGET_BASE}/centreon-widget-live-top10-cpu-usage/centreon-widget-live-top10-cpu-usage-${WIDGET_TOP10_CPU_VER}.tar.gz"
+WIDGET_TOP10_MEM="${WIDGET_BASE}/centreon-widget-live-top10-memory/centreon-widget-live-top10-memory-${WIDGET_TOP10_MEM_VER}.tar.gz"
+WIDGET_ENGINE_STATUS="${WIDGET_BASE}/centreon-widget-engine-status/centreon-widget-engine-status-${WIDGET_ENGINE_STATUS_VER}.tar.gz"
+WIDGET_GRID_MAP="${WIDGET_BASE}/centreon-widget-grid-map/centreon-widget-grid-map-${WIDGET_GRID_MAP_VER}.tar.gz"
+WIDGET_HTTP_LOADER="${WIDGET_BASE}/centreon-widget-httploader/centreon-widget-httploader-${WIDGET_HTTP_LOADER_VER}.tar.gz"
+WIDGET_TACTICAL_OVERVIEW="${WIDGET_BASE}/centreon-widget-tactical-overview/centreon-widget-tactical-overview-${WIDGET_TACTICAL_OVERVIEW_VER}.tar.gz"
 ## Temp install dir
 DL_DIR='/usr/local/src'
 ## Install dir
@@ -117,40 +129,6 @@ debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_pass
 apt-get install --force-yes -y mariadb-server
 }
 
-function php53_install () {
-echo "
-======================================================================
-
-           Add Squeeze repo for php 5.3 on Wheezy !! NOT USED ANYMORE !!
-           At the moment Centreon doesn't support PHP 5.4
-
-======================================================================
-"
-
-echo 'deb http://ftp.fr.debian.org/debian/ squeeze main non-free
-deb-src http://ftp.fr.debian.org/debian/ squeeze main non-free
-
-deb http://security.debian.org/ squeeze/updates main non-free
-deb-src http://security.debian.org/ squeeze/updates main non-free' > /etc/apt/sources.list.d/squeeze.list
-
-# Fix version PHP5.3 on Wheezy
-echo 'Package: php5*
-Pin: release a=oldstable
-Pin-Priority: 700
-
-Package: libapache2-mod-php5
-Pin: release a=oldstable
-Pin-Priority: 700
-
-Package: php-pear
-Pin: release a=oldstable
-Pin-Priority: 700
-
-Package: *
-Pin: release a=stable
-Pin-Priority: 600' > /etc/apt/preferences.d/preferences
-
-apt-get update
 }
 
 function clib_install () {
@@ -599,6 +577,14 @@ cd ${DL_DIR}
   wget -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   wget -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   
+  wget -qO- ${WIDGET_TOP10_CPU} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${WIDGET_TOP10_MEM} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${WIDGET_ENGINE_STATUS} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${WIDGET_GRID_MAP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${WIDGET_HTTP_LOADER} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -qO- ${WIDGET_TACTICAL_OVERVIEW} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  chown -R $CENTREON_USER:$CENTREON_GROUP ${INSTALL_DIR}/centreon/www/widgets
+  
   wget -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
   # Added to fix a bug in nagvis module
   cat >> ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis/sql/install.sql << 'EOF'
@@ -655,13 +641,6 @@ if [[ $? -ne 0 ]];
     echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_OK}"
 fi
 
-#php53_install >> ${INSTALL_LOG} 2>&1   # No more needed
-#if [[ $? -ne 0 ]];
-#  then
-#    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_FAIL}"
-#  else
-#    echo -e "${bold}Step2${normal}  => Install PHP5.3 on Wheezy                              ${STATUS_OK}"
-#fi
 clib_install >> ${INSTALL_LOG} 2>&1
 if [[ $? -ne 0 ]];
   then
@@ -725,13 +704,13 @@ if [[ $? -ne 0 ]];
   else
     echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_OK}"
 fi
-clapi_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_OK}"
-fi
+#clapi_install >> ${INSTALL_LOG} 2>&1
+#if [[ $? -ne 0 ]];
+#  then
+#    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_FAIL}"
+#  else
+#    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_OK}"
+#fi
 
 widget_install >> ${INSTALL_LOG} 2>&1
 if [[ $? -ne 0 ]];
