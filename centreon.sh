@@ -97,6 +97,34 @@ function text_params () {
   STATUS_OK="[$COL_GREEN${bold} OK ${normal}$COL_RESET]"
 }
 
+function php_install () {
+echo '
+======================================================================
+
+                  Install PHP, pear and apache
+
+======================================================================
+'
+DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
+ apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
+ php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
+ snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite php5-intl
+
+# Cleanup to prevent space full on /var
+apt-get clean
+
+/usr/bin/pear update-channels
+/usr/bin/pear upgrade-all
+wget -nv --no-check-certificate https://de.pear.php.net/get/XML_RPC-1.5.5.tgz -O ${DL_DIR}/XML_RPC-1.5.5.tgz
+cd ${DL_DIR}
+/usr/bin/pear install XML_RPC-1.5.5.tgz
+/usr/bin/pear install Archive_Tar Archive_Zip-beta Auth_SASL Console_Getopt DB DB_DataObject DB_DataObject_FormBuilder Date HTML_Common HTML_QuickForm HTTP_Request Log MDB2 Net_Ping Net_SMTP Net_Socket Net_Traceroute-alpha Net_URL SOAP-beta Structures_Graph Validate-beta
+/usr/bin/pear upgrade-all
+cd -
+sed -i 's/;date.timezone =/date.timezone = Europe\/Paris/' /etc/php5/apache2/php.ini
+
+}
+
 function mariadb_install() {
 echo '
 ======================================================================
@@ -145,7 +173,7 @@ if [[ -e centreon-clib-${CLIB_VER}.tar.gz ]] ;
   then
     echo 'File already exists !'
   else
-    wget ${CLIB_URL} -O ${DL_DIR}/centreon-clib-${CLIB_VER}.tar.gz
+    wget -nv ${CLIB_URL} -O ${DL_DIR}/centreon-clib-${CLIB_VER}.tar.gz
 fi
 
 tar xzf centreon-clib-${CLIB_VER}.tar.gz
@@ -179,7 +207,7 @@ if [[ -e centreon-connector-${CONNECTOR_VER}.tar.gz ]]
   then
     echo 'File already exists !'
   else
-    wget ${CONNECTOR_URL} -O ${DL_DIR}/centreon-connector-${CONNECTOR_VER}.tar.gz
+    wget -nv ${CONNECTOR_URL} -O ${DL_DIR}/centreon-connector-${CONNECTOR_VER}.tar.gz
 fi
 
 tar xzf centreon-connector-${CONNECTOR_VER}.tar.gz
@@ -232,7 +260,7 @@ if [[ -e centreon-engine-${ENGINE_VER}.tar.gz ]]
   then
     echo 'File already exists !'
   else
-    wget ${ENGINE_URL} -O ${DL_DIR}/centreon-engine-${ENGINE_VER}.tar.gz
+    wget -nv ${ENGINE_URL} -O ${DL_DIR}/centreon-engine-${ENGINE_VER}.tar.gz
 fi
 
 tar xzf centreon-engine-${ENGINE_VER}.tar.gz
@@ -280,7 +308,7 @@ if [[ -e nagios-plugins-${PLUGIN_VER}.tar.gz ]]
   then
     echo 'File already exists !'
   else
-    wget ${PLUGIN_URL} -O ${DL_DIR}/nagios-plugins-${PLUGIN_VER}.tar.gz
+    wget -nv ${PLUGIN_URL} -O ${DL_DIR}/nagios-plugins-${PLUGIN_VER}.tar.gz
 fi
 
 tar xzf nagios-plugins-${PLUGIN_VER}.tar.gz
@@ -317,7 +345,7 @@ if [[ -e centreon-broker-${BROKER_VER}.tar.gz ]]
   then 
     echo 'File already exists !'
   else
-    wget ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
+    wget -nv ${BROKER_URL} -O ${DL_DIR}/centreon-broker-${BROKER_VER}.tar.gz
 fi
 
 if [[ -d /var/log/centreon-broker ]]
@@ -450,15 +478,6 @@ echo '
 
 ======================================================================
 '
-DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
- apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
- php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
- snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite php5-intl
-
-# Cleanup to prevent space full on /var
-apt-get clean
-
-
 # MIBS errors
 if [[ -d /root/mibs_removed ]]
   then
@@ -477,7 +496,7 @@ if [[ -e centreon-web-${CENTREON_VER}.tar.gz ]]
   then
     echo 'File already exists !'
   else
-    wget ${CENTREON_URL} -O ${DL_DIR}/centreon-web-${CENTREON_VER}.tar.gz
+    wget -nv ${CENTREON_URL} -O ${DL_DIR}/centreon-web-${CENTREON_VER}.tar.gz
 fi
 
 groupadd -g 6003 ${CENTREON_GROUP}
@@ -486,6 +505,9 @@ usermod -aG ${CENTREON_GROUP} ${ENGINE_USER}
 
 tar xzf centreon-web-${CENTREON_VER}.tar.gz
 cd ${DL_DIR}/centreon-web-${CENTREON_VER}
+# Workaround for Install generateSqlLite FAIL
+mkdir -p ${INSTALL_DIR}/centreon/bin/
+cp ${DL_DIR}/centreon-web-${CENTREON_VER}/bin/generateSqlLite ${INSTALL_DIR}/centreon/bin/
 
 echo ' Generate Centreon template '
 
@@ -526,6 +548,9 @@ Alias /centreon $INSTALL_DIR/centreon/www/
     Require all granted
 </Directory>
 EOF
+# Enable centreon conf and restart apache
+/usr/sbin/a2ensite centreon
+/bin/systemctl restart apache2.service
 fi
 
 ## Workarounds
@@ -553,7 +578,7 @@ cd ${DL_DIR}
     then
       echo 'File already exists !'
     else
-      wget ${CLAPI_URL} -O ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
+      wget -nv ${CLAPI_URL} -O ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
   fi
     cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
@@ -569,21 +594,21 @@ echo '
 =======================================================================
 '
 cd ${DL_DIR}
-  wget -qO- ${WIDGET_HOST} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_HOSTGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_SERVICE} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_HOST} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_HOSTGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_SERVICE} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_SERVICEGROUP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_GRAPH} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   
-  wget -qO- ${WIDGET_TOP10_CPU} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_TOP10_MEM} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_ENGINE_STATUS} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_GRID_MAP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_HTTP_LOADER} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
-  wget -qO- ${WIDGET_TACTICAL_OVERVIEW} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_TOP10_CPU} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_TOP10_MEM} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_ENGINE_STATUS} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_GRID_MAP} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_HTTP_LOADER} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
+  wget -nv -qO- ${WIDGET_TACTICAL_OVERVIEW} | tar -C ${INSTALL_DIR}/centreon/www/widgets --strip-components 1 -xzv
   chown -R $CENTREON_USER:$CENTREON_GROUP ${INSTALL_DIR}/centreon/www/widgets
   
-  wget -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
+  wget -nv -qO- ${NAGVIS_MOD_URL} | tar -C ${INSTALL_DIR}/centreon/www/modules centreon-nagvis-${NAGVIS_MOD_VER}/www --strip-components 3 -xzv
   # Added to fix a bug in nagvis module
   cat >> ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis/sql/install.sql << 'EOF'
 INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_auth', 'single');
@@ -630,6 +655,14 @@ echo "
 ======================================================================
 "
 text_params
+
+php_install > ${INSTALL_LOG} 2>&1
+if [[ $? -ne 0 ]];
+  then
+    echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_FAIL}"
+  else
+    echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_OK}"
+fi
 
 mariadb_install > ${INSTALL_LOG} 2>&1
 if [[ $? -ne 0 ]];
