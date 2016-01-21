@@ -549,7 +549,7 @@ Alias /centreon $INSTALL_DIR/centreon/www/
 </Directory>
 EOF
 # Enable centreon conf and restart apache
-/usr/sbin/a2ensite centreon
+/usr/sbin/a2enconf centreon
 /bin/systemctl restart apache2.service
 fi
 
