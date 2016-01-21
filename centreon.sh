@@ -155,6 +155,7 @@ Pin-Priority: 1000
 debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_password password ${MYSQL_PASSWORD}"
 debconf-set-selections <<< "mariadb-server-${MARIADB_VER} mysql-server/root_password_again password ${MYSQL_PASSWORD}"
 apt-get install --force-yes -y mariadb-server
+apt-get upgrade --force-yes
 }
 
 function clib_install () {
