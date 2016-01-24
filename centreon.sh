@@ -509,6 +509,7 @@ cd ${DL_DIR}/centreon-web-${CENTREON_VER}
 # Workaround for Install generateSqlLite FAIL
 mkdir -p ${INSTALL_DIR}/centreon/bin/
 cp ${DL_DIR}/centreon-web-${CENTREON_VER}/bin/generateSqlLite ${INSTALL_DIR}/centreon/bin/
+chmod 755 ${INSTALL_DIR}/centreon/bin/generateSqlLite
 
 echo ' Generate Centreon template '
 
