@@ -398,7 +398,7 @@ INSTALL_DIR_ENGINE;Centreon Engine directory;1;0;${INSTALL_DIR}/centreon-engine
 CENTREON_ENGINE_STATS_BINARY;Centreon Engine Stats binary;1;1;${INSTALL_DIR}/centreon-engine/bin/centenginestats
 MONITORING_VAR_LIB;Centreon Engine var lib directory;1;0;/var/lib/centreon-engine
 CENTREON_ENGINE_CONNECTORS;Centreon Engine Connector path;0;0;${INSTALL_DIR}/centreon-connector
-CENTREON_ENGINE_LIB;Centreon Engine Library (*.so) directory;1;0;${INSTALL_DIR}/centreon-engine/lib/centreon-engine/
+CENTREON_ENGINE_LIB;Centreon Engine Library (*.so) directory;1;0;${INSTALL_DIR}/centreon-engine/lib/centreon-engine
 EMBEDDED_PERL;Embedded Perl initialisation file;0;1;
 EOF
 
@@ -410,9 +410,9 @@ cat > ${DL_DIR}/${CENTREON_BROKER_TMPL} << EOF
 # column 5 => default value
 CENTREONBROKER_ETC;Centreon Broker etc directory;1;0;${INSTALL_DIR}/centreon-broker/etc
 CENTREONBROKER_CBMOD;Centreon Broker module (cbmod.so);0;1;${INSTALL_DIR}/centreon-broker/lib/cbmod.so
-CENTREONBROKER_LOG;Centreon Broker log directory;1;0;/var/log/centreon-broker/
+CENTREONBROKER_LOG;Centreon Broker log directory;1;0;/var/log/centreon-broker
 CENTREONBROKER_VARLIB;Retention file directory;1;0;/var/lib/centreon-broker
-CENTREONBROKER_LIB;Centreon Broker lib (*.so) directory;1;0;${INSTALL_DIR}/centreon-broker/lib/centreon-broker/
+CENTREONBROKER_LIB;Centreon Broker lib (*.so) directory;1;0;${INSTALL_DIR}/centreon-broker/lib/centreon-broker
 EOF
 
 cat > ${DL_DIR}/${CENTREON_WEB_TMPL} << EOF
@@ -543,11 +543,9 @@ chmod 755 ${INSTALL_DIR}/centreon/bin/generateSqlLite
 
 echo ' Generate Centreon templates '
 
+cp ${DL_DIR}/${CENTREON_ENGINE_TMPL} ${DL_DIR}/centreon-web-${CENTREON_VER}/www/install/var/engines/centreon-engine
+cp ${DL_DIR}/${CENTREON_BROKER_TMPL} ${DL_DIR}/centreon-web-${CENTREON_VER}/www/install/var/brokers/centreon-broker
 ./install.sh -i -f ${DL_DIR}/${CENTREON_WEB_TMPL}
-cp ${DL_DIR}/${CENTREON_ENGINE_TMPL} ${INSTALL_DIR}/centreon/www/install/var/engines/centreon-engine
-# Temp hack to fix connector var override issue
-sed -i -e "s/^\$conf_centreon\['centreon_engine_connectors'\] = \"\/usr\/lib\/centreon-connector\";/\$conf_centreon['centreon_engine_connectors'] = \"\/usr\/local\/centreon-connector\";/g" ${INSTALL_DIR}/centreon/www/install/install.conf.php
-cp ${DL_DIR}/${CENTREON_BROKER_TMPL} ${INSTALL_DIR}/centreon/www/install/var/brokers/centreon-broker
 }
 
 function post_install () {
