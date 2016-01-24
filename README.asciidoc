@@ -5,7 +5,13 @@ Centreon autoinstall for Debian (with centreon-engine)
 
 Tested on Debian Wheezy and Jessie
 
-Now enjoy the new Centreon Web 2.7 interface :)
+Now enjoy the new Centreon Web 2.7.2 interface :)
+
+Added latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
+
+The initial web wizard is now filled with the correct values, no more change is needed.
+
+Work perfectly in case of upgrade, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD).
 
 == Versions
 - CLIB_VER='1.4.2'
@@ -49,6 +55,7 @@ Now enjoy the new Centreon Web 2.7 interface :)
 == Usage
 
 Change your vars at the beginning of the script
+Update mysql password (MYSQL_PASSWORD) or restore your root mysql password in case of upgrade
 
 ----
 sudo ./centreon.sh
@@ -56,7 +63,7 @@ sudo ./centreon.sh
 
 http://localhost/centreon/
 
-== Complete the web wizard install
+== Complete the web wizard install (prefilled with correct values now)
 
 |===
 | Monitoring engine                        | centreon-engine
@@ -81,7 +88,7 @@ http://localhost/centreon/
 
 === After the web wizard
 
-.Restart cbd
+Restart cbd
 ----
 service cbd restart
 ----
