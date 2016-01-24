@@ -65,11 +65,14 @@ BROKER_USER='centreon-broker'
 BROKER_GROUP='centreon-broker'
 CENTREON_USER='centreon'
 CENTREON_GROUP='centreon'
-## TMPL file (template install file for Centreon)
-CENTREON_TMPL='centreon_engine.tmpl'
+## TMPL files (template install files for Centreon)
+CENTREON_ENGINE_TMPL='centreon_engine.tmpl'
+CENTREON_BROKER_TMPL='centreon_broker.tmpl'
+CENTREON_WEB_TMPL='centreon_web.tpl'
+
 ETH0_IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
 
-# Set some variables to support Debian 7 and 8
+# Set some variables to support Debian 7 and 8
 case `cat /etc/debian_version` in
     7\.[0-9] )
         DEBVERS='wheezy'
@@ -381,12 +384,39 @@ function create_centreon_tmpl() {
 echo '
 ======================================================================
 
-                  Centreon template generation
+                  Centreon templates generation
 
 ======================================================================
 '
-cat > ${DL_DIR}/${CENTREON_TMPL} << EOF
-#Centreon template
+cat > ${DL_DIR}/${CENTREON_ENGINE_TMPL} << EOF
+# column 1 => name of macro
+# column 2 => label of macro
+# column 3 => 0:optional, 1: required
+# column 4 => 0:directory, 1: file, 2: other
+# column 5 => default value
+INSTALL_DIR_ENGINE;Centreon Engine directory;1;0;${INSTALL_DIR}/centreon-engine
+CENTREON_ENGINE_STATS_BINARY;Centreon Engine Stats binary;1;1;${INSTALL_DIR}/centreon-engine/bin/centenginestats
+MONITORING_VAR_LIB;Centreon Engine var lib directory;1;0;/var/lib/centreon-engine
+CENTREON_ENGINE_CONNECTORS;Centreon Engine Connector path;0;0;${INSTALL_DIR}/centreon-connector
+CENTREON_ENGINE_LIB;Centreon Engine Library (*.so) directory;1;0;${INSTALL_DIR}/centreon-engine/lib/centreon-engine/
+EMBEDDED_PERL;Embedded Perl initialisation file;0;1;
+EOF
+
+cat > ${DL_DIR}/${CENTREON_BROKER_TMPL} << EOF
+# column 1 => name of macro
+# column 2 => label of macro
+# column 3 => 0:optional, 1: required
+# column 4 => 0:directory, 1: file
+# column 5 => default value
+CENTREONBROKER_ETC;Centreon Broker etc directory;1;0;${INSTALL_DIR}/centreon-broker/etc
+CENTREONBROKER_CBMOD;Centreon Broker module (cbmod.so);0;1;${INSTALL_DIR}/centreon-broker/lib/cbmod.so
+CENTREONBROKER_LOG;Centreon Broker log directory;1;0;/var/log/centreon-broker/
+CENTREONBROKER_VARLIB;Retention file directory;1;0;/var/lib/centreon-broker
+CENTREONBROKER_LIB;Centreon Broker lib (*.so) directory;1;0;${INSTALL_DIR}/centreon-broker/lib/centreon-broker/
+EOF
+
+cat > ${DL_DIR}/${CENTREON_WEB_TMPL} << EOF
+# Centreon Web template
 PROCESS_CENTREON_WWW=1
 PROCESS_CENTSTORAGE=1
 PROCESS_CENTCORE=1
@@ -511,9 +541,13 @@ mkdir -p ${INSTALL_DIR}/centreon/bin/
 cp ${DL_DIR}/centreon-web-${CENTREON_VER}/bin/generateSqlLite ${INSTALL_DIR}/centreon/bin/
 chmod 755 ${INSTALL_DIR}/centreon/bin/generateSqlLite
 
-echo ' Generate Centreon template '
+echo ' Generate Centreon templates '
 
-./install.sh -i -f ${DL_DIR}/${CENTREON_TMPL}
+./install.sh -i -f ${DL_DIR}/${CENTREON_WEB_TMPL}
+cp ${DL_DIR}/${CENTREON_ENGINE_TMPL} ${INSTALL_DIR}/centreon/www/install/var/engines/centreon-engine
+# Temp hack to fix connector var override issue
+sed -i -e "s/^\$conf_centreon\['centreon_engine_connectors'\] = \"\/usr\/lib\/centreon-connector\";/\$conf_centreon['centreon_engine_connectors'] = \"\/usr\/local\/centreon-connector\";/g" ${INSTALL_DIR}/centreon/www/install/install.conf.php
+cp ${DL_DIR}/${CENTREON_BROKER_TMPL} ${INSTALL_DIR}/centreon/www/install/var/brokers/centreon-broker
 }
 
 function post_install () {
@@ -534,7 +568,7 @@ service centcore restart
 service centengine restart
 service centreontrapd restart
 
-# Workarounds for apache2 on Debian 8
+# Workarounds for apache2 on Debian 8
 if [ "$DEBVERS" == "jessie" ]
 then
 
@@ -557,7 +591,7 @@ fi
 
 ## Workarounds
 ## config:  cannot open '/var/lib/centreon-broker/module-temporary.tmp-1-central-module-output-master-failover'
-## (mode w+): Permission denied)
+## (mode w+): Permission denied)
 chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
@@ -584,7 +618,7 @@ cd ${DL_DIR}
       tar xzf ${DL_DIR}/centreon-clapi-${CLAPI_VER}.tar.gz
   fi
     cd ${DL_DIR}/centreon-clapi-${CLAPI_VER}
-    ./install.sh -u `grep CENTREON_ETC ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"`
+    ./install.sh -u `grep CENTREON_ETC ${DL_DIR}/${CENTREON_WEB_TMPL} | cut -d '=' -f2 | tr -d \"`
 }
 
 function widget_install() {
@@ -616,7 +650,7 @@ cd ${DL_DIR}
 INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_auth', 'single');
 INSERT INTO `options` (`key`, `value`) VALUES ('centreon_nagvis_single_user', 'centreon_nagvis');
 EOF
-  chown -R `grep WEB_USER ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"`:`grep WEB_GROUP ${DL_DIR}/${CENTREON_TMPL} | cut -d '=' -f2 | tr -d \"` ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis
+  chown -R `grep WEB_USER ${DL_DIR}/${CENTREON_WEB_TMPL} | cut -d '=' -f2 | tr -d \"`:`grep WEB_GROUP ${DL_DIR}/${CENTREON_WEB_TMPL} | cut -d '=' -f2 | tr -d \"` ${INSTALL_DIR}/centreon/www/modules/centreon-nagvis
 }
 
 function centreon_plugins_install() {
