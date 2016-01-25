@@ -1,23 +1,18 @@
 centreon-install
 ================
 
-Centreon autoinstall for Debian (with centreon-engine)
+Centreon autoinstall for Debian (with centreon-engine).
 
-Tested on Debian Wheezy and Jessie
+Tested on Debian Wheezy and Jessie (support fresh install or upgrade).
 
-Now enjoy the new Centreon Web 2.7.1 interface :)
+- Now enjoy the new Centreon Web 2.7.1 interface :-)
 
-Added latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
+- Added latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
 
-The initial web wizard is now filled with the correct values, no more change is needed.
+- The initial web wizard is now filled with the correct values, no more change is needed.
 
-Work perfectly in case of upgrade, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD).
+- Work perfectly in case of upgrade, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD).
 
-Added latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
-
-The initial web wizard is now filled with the correct values, no more change is needed.
-
-Work perfectly in case of upgrade, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD).
 
 == Versions
 - CLIB_VER='1.4.2'
@@ -94,10 +89,17 @@ http://localhost/centreon/
 
 === After the web wizard
 
-Restart cbd
-----
-service cbd restart
-----
+Connect to your new Centreon (or upgraded one),
+
+-> Go to Configuration, Pollers,
+
+-> Under 'Actions' column, click on the wheel, tick 'Move Export Files' and 'Restart Monitoring Engine',
+
+-> Select 'Restart' in Method box and click on 'Export' button.
+
+Once it's done, the best is to restart your server to be sure everything restart correctly.
+
+Enjoy :-)
 
 == Vagrant
 
