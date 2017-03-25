@@ -376,9 +376,6 @@ make
 make install
 update-rc.d cbd defaults
 
-# Broker missing var directory break to prevent errors in broker-master log
-[ ! -d /usr/local/centreon-broker/var ] && [ $install_engine = 0 ] && mkdir /usr/local/centreon-broker/var && chown centreon-broker. /usr/local/centreon-broker/var
-
 # Cleanup to prevent space full on /var
 apt-get clean
 }
@@ -594,12 +591,11 @@ Alias /centreon $INSTALL_DIR/centreon/www/
     Require all granted
 </Directory>
 EOF
-    if [ $install_web -eq 0 ]; then
-        # Enable centreon conf and restart apache
-        /usr/sbin/a2enconf centreon
-        /bin/systemctl restart apache2.service
-    fi
+# Enable centreon conf and restart apache
+/usr/sbin/a2enconf centreon
+/bin/systemctl restart apache2.service
 fi
+
 ## Workarounds
 ## config:  cannot open '/var/lib/centreon-broker/module-temporary.tmp-1-central-module-output-master-failover'
 ## (mode w+): Permission denied)
@@ -607,6 +603,7 @@ chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
+
 }
 
 ##ADDONS
