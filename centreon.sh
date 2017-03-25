@@ -376,6 +376,9 @@ make
 make install
 update-rc.d cbd defaults
 
+# Broker missing var directory break to prevent errors in broker-master log
+[ ! -d /usr/local/centreon-broker/var ] && [ $install_engine = 0 ] && mkdir /usr/local/centreon-broker/var && chown centreon-broker. /usr/local/centreon-broker/var
+
 # Cleanup to prevent space full on /var
 apt-get clean
 }
@@ -557,11 +560,19 @@ echo '
 
 =====================================================================
 '
-# Add mysql config for Centreon
-echo '[mysqld]
-innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
+if [ $install_db -eq 0 ]; then
+    # Add mysql config for Centreon
+    echo '[mysqld]
+    innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
+    echo '[mysqld]
+    open_files_limit=32000' > /etc/mysql/conf.d/open_files_limit.cnf
 
-service mysql restart
+    mkdir -p /etc/systemd/system/mysql.service.d/
+    echo -e "[Service]\nLimitNOFILE=infinity" > /etc/systemd/system/mysql.service.d/limits.conf
+    systemctl daemon-reload
+
+    service mysql restart
+fi
 service cbd restart
 service centcore restart
 service centengine restart
@@ -583,11 +594,12 @@ Alias /centreon $INSTALL_DIR/centreon/www/
     Require all granted
 </Directory>
 EOF
-# Enable centreon conf and restart apache
-/usr/sbin/a2enconf centreon
-/bin/systemctl restart apache2.service
+    if [ $install_web -eq 0 ]; then
+        # Enable centreon conf and restart apache
+        /usr/sbin/a2enconf centreon
+        /bin/systemctl restart apache2.service
+    fi
 fi
-
 ## Workarounds
 ## config:  cannot open '/var/lib/centreon-broker/module-temporary.tmp-1-central-module-output-master-failover'
 ## (mode w+): Permission denied)
@@ -595,7 +607,6 @@ chmod 775 /var/lib/centreon-broker/
 
 ## drwxr-xr-x 3 root root 15 Feb  4 20:31 centreon-engine
 chown ${ENGINE_USER}:${ENGINE_GROUP} /var/lib/centreon-engine/
-
 }
 
 ##ADDONS
