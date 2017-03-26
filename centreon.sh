@@ -360,6 +360,11 @@ if [[ -d /var/log/centreon-broker ]]
     chown ${BROKER_USER}:${ENGINE_GROUP} /var/log/centreon-broker
     chmod 775 /var/log/centreon-broker
 fi
+if [[ -d /usr/local/centreon-broker/var ]]; then
+    mkdir /usr/local/centreon-broker/var
+    chown ${BROKER_USER}:${ENGINE_GROUP} /usr/local/centreon-broker/var
+    chmod 775 /usr/local/centreon-broker/var
+fi
 
 tar xzf centreon-broker-${BROKER_VER}.tar.gz
 cd ${DL_DIR}/centreon-broker-${BROKER_VER}/build/
