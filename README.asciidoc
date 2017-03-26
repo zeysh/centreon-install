@@ -63,7 +63,11 @@ Setup your mysql root password before running the script :
 
 ----
 export MYSQL_PASSWORD='YOUR_PASSWORD'
-sudo ./centreon.sh
+
+as non root:
+sudo -E bash ./centreon.sh
+as root:
+bash ./centreon.sh
 ----
 
 Once complete, if you've setup your servers role as a central or remote-ui poller you can browse the interface via:
