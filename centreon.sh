@@ -8,10 +8,10 @@ export DEBIAN_FRONTEND=noninteractive
 ## Versions
 CLIB_VER='1.4.2'
 CONNECTOR_VER='1.1.2'
-ENGINE_VER='1.5.0'
+ENGINE_VER='1.7.0'
 PLUGIN_VER='2.1.1'
-BROKER_VER='2.11.0'
-CENTREON_VER='2.7.1'
+BROKER_VER='3.0.3'
+CENTREON_VER='2.8.4'
 CLAPI_VER='1.8.0'
 NAGVIS_MOD_VER='1.1.1'
 # MariaDB Series
@@ -57,7 +57,7 @@ INSTALL_DIR='/usr/local'
 ## Log install file
 INSTALL_LOG='/usr/local/src/centreon-install.log'
 ## Set mysql-server root password
-MYSQL_PASSWORD='YOUR_PASSWORD'
+MYSQL_PASSWORD=${MYSQL_PASSWORD:-YOUR_PASSWORD}
 ## Users and groups
 ENGINE_USER='centreon-engine'
 ENGINE_GROUP='centreon-engine'
@@ -111,8 +111,8 @@ echo '
 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes bsd-mailx \
  apache2 php5-mysql rrdtool librrds-perl tofrodos php5 php-pear php5-ldap php5-snmp \
  php5-gd libconfig-inifiles-perl libcrypt-des-perl libdigest-hmac-perl libgd-gd2-perl \
- snmp snmpd snmp-mibs-downloader sudo libdigest-sha-perl php5-sqlite php5-intl
-
+ snmp snmpd sudo libdigest-sha-perl php5-sqlite php5-intl
+DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes snmp-mibs-downloader
 # Cleanup to prevent space full on /var
 apt-get clean
 
@@ -360,6 +360,11 @@ if [[ -d /var/log/centreon-broker ]]
     chown ${BROKER_USER}:${ENGINE_GROUP} /var/log/centreon-broker
     chmod 775 /var/log/centreon-broker
 fi
+if [[ -d /usr/local/centreon-broker/var ]]; then
+    mkdir /usr/local/centreon-broker/var
+    chown ${BROKER_USER}:${ENGINE_GROUP} /usr/local/centreon-broker/var
+    chmod 775 /usr/local/centreon-broker/var
+fi
 
 tar xzf centreon-broker-${BROKER_VER}.tar.gz
 cd ${DL_DIR}/centreon-broker-${BROKER_VER}/build/
@@ -436,6 +441,7 @@ CENTREON_DATADIR="${INSTALL_DIR}/centreon/data"
 CENTREON_USER=${CENTREON_USER}
 CENTREON_GROUP=${CENTREON_GROUP}
 PLUGIN_DIR="${INSTALL_DIR}/centreon-plugins/libexec"
+CENTREON_PLUGINS="${INSTALL_DIR}/centreon-plugins/libexec"
 CENTREON_LOG='/var/log/centreon'
 CENTREON_ETC="/etc/centreon"
 CENTREON_RUNDIR='/var/run/centreon'
@@ -556,11 +562,19 @@ echo '
 
 =====================================================================
 '
-# Add mysql config for Centreon
-echo '[mysqld]
-innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
+if [ $install_db -eq 0 ]; then
+    # Add mysql config for Centreon
+    echo '[mysqld]
+    innodb_file_per_table=1' > /etc/mysql/conf.d/innodb.cnf
+    echo '[mysqld]
+    open_files_limit=32000' > /etc/mysql/conf.d/open_files_limit.cnf
 
-service mysql restart
+    mkdir -p /etc/systemd/system/mysql.service.d/
+    echo -e "[Service]\nLimitNOFILE=infinity" > /etc/systemd/system/mysql.service.d/limits.conf
+    systemctl daemon-reload
+
+    service mysql restart
+fi
 service cbd restart
 service centcore restart
 service centengine restart
@@ -688,107 +702,166 @@ echo "
 
 ======================================================================
 "
-text_params
 
-php_install > ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_OK}"
+if [ $install_web -eq 0 ]; then
+    php_install > ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step1${normal}  => Install PHP, PEAR                                     ${STATUS_OK}"
+    fi
 fi
-
-mariadb_install > ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step1${normal}  => Install MariaDB                                       ${STATUS_OK}"
+if [ $install_db -eq 0 ]; then
+	mariadb_install > ${INSTALL_LOG} 2>&1
+	if [[ $? -ne 0 ]];
+	  then
+	    echo -e "${bold}Step2${normal}  => Install MariaDB                                       ${STATUS_FAIL}"
+	  else
+	    echo -e "${bold}Step2${normal}  => Install MariaDB                                       ${STATUS_OK}"
+	fi
 fi
-
-clib_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_OK}"
+if [ $install_engine -eq 0 ]; then
+    clib_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step3${normal}  => Clib install                                          ${STATUS_OK}"
+    fi
+    centreon_connectors_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_OK}"
+    fi
+    centreon_engine_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_OK}"
+    fi
+    nagios_plugin_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_OK}"
+    fi
+    centreon_plugins_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_OK}"
+    fi
+    centreon_broker_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_OK}"
+    fi
 fi
-centreon_connectors_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step4${normal}  => Centreon Perl and SSH connectors install              ${STATUS_OK}"
+if [ $install_web -eq 0 ]; then
+    create_centreon_tmpl >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_OK}"
+    fi
+    centreon_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_OK}"
+    fi
+    post_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_OK}"
+    fi
+    widget_install >> ${INSTALL_LOG} 2>&1
+    if [[ $? -ne 0 ]];
+      then
+        echo -e "${bold}Step12${normal} => Widgets and Nagvis install                            ${STATUS_FAIL}"
+      else
+        echo -e "${bold}Step12${normal} => Widgets and Nagvis install                            ${STATUS_OK}"
+    fi
+    echo ""
 fi
-centreon_engine_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step5${normal}  => Centreon Engine install                               ${STATUS_OK}"
-fi
-nagios_plugin_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step6${normal}  => Nagios plugins install                                ${STATUS_OK}"
-fi
-centreon_plugins_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step6${normal}  => Centreon plugins install                              ${STATUS_OK}"
-fi
-centreon_broker_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step7${normal}  => Centreon Broker install                               ${STATUS_OK}"
-fi
-create_centreon_tmpl >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step8${normal}  => Centreon template generation                          ${STATUS_OK}"
-fi
-centreon_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step9${normal}  => Centreon web interface install                        ${STATUS_OK}"
-fi
-post_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step10${normal} => Post install                                          ${STATUS_OK}"
-fi
-#clapi_install >> ${INSTALL_LOG} 2>&1
-#if [[ $? -ne 0 ]];
-#  then
-#    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_FAIL}"
-#  else
-#    echo -e "${bold}Step11${normal} => CLAPI install                                         ${STATUS_OK}"
-#fi
-
-widget_install >> ${INSTALL_LOG} 2>&1
-if [[ $? -ne 0 ]];
-  then
-    echo -e "${bold}Step12${normal} => Widgets and Nagvis install                            ${STATUS_FAIL}"
-  else
-    echo -e "${bold}Step12${normal} => Widgets and Nagvis install                            ${STATUS_OK}"
-fi
-echo ""
 echo "##### Install completed #####" >> ${INSTALL_LOG} 2>&1
 }
+
+function usage() {
+    echo "Usage:"
+    echo "  -r|--role  {roletype}  Specific role installation"
+    echo "              roletype="
+    echo "                  central          # web, core, engine, db"
+    echo "                  central-nodb     # web, engine"
+    echo "                  remote-db        # db"
+    echo "                  poller           # engine"
+    echo "                  poller-ui        # web, engine, db"
+    exit 1
+}
+
+text_params
+# Command Line Options
+while getopt -o r:h --long role:,help; do
+    case "$1" in
+        -r|--role)
+            role=$2
+            case $2 in
+                'central')
+                    install_web=0; install_core=0; install_engine=0; install_db=0; shift 2; break
+                    ;;
+                'central-nodb')
+                    install_web=0; install_core=0; install_engine=0; install_db=1; shift 2; break
+                    ;;
+                'remote-db')
+                    install_web=1; install_core=1; install_engine=1; install_db=0; shift 2; break
+                    ;;
+                'poller')
+                    install_web=1; install_core=1; install_engine=0; install_db=1; shift 2; break
+                    ;;
+                'poller-ui')
+                    install_web=0; install_core=1; install_engine=0; install_db=0; shift 2; break
+                    ;;
+                *)
+                    echo "Unknown role '$role'"
+                    exit 1
+                    ;;
+            esac
+            ;;
+        -h|--help)
+            usage
+            exit 1
+            ;;
+        --) shift ; break ;;
+        "") usage ; break ;;
+
+        *)
+            echo "Unknown option '$1'"
+            exit 1
+            ;;
+    esac
+done
+
+# Prerequisite checks
+[ "$MYSQL_PASSWORD" = "YOUR_PASSWORD" ] && echo -e "${COL_RED}Error${COL_RESET}: MYSQL_PASSWORD not set!\n\nRun \`export MYSQL_PASSWORD='YOUR_PASSWORD'\` and then rerun the centreon.sh" && exit 1
+
 # Exec main function
 main
 echo -e ''
-echo -e "${bold}Go to http://${ETH0_IP}/centreon to complete the setup${normal} "
+if [ $install_web -eq 0 ]; then
+    echo -e "${bold}Go to http://${ETH0_IP}/centreon to complete the setup${normal} "
+else
+    echo -e "${bold}Installation Completed.${normal}"
+fi
 echo -e ''

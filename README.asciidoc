@@ -3,24 +3,29 @@ centreon-install
 
 Centreon autoinstall for Debian (with centreon-engine).
 
-Tested on Debian Wheezy and Jessie (support fresh install or upgrade).
+Tested on Debian Wheezy (Up to 2.7.x) and Jessie (support fresh install or upgrade).
 
-- Now enjoy the new Centreon Web 2.7.1 interface :-)
+- Now enjoy the new Centreon Web 2.8.x interface :-)
 
-- Added latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
+- Added   : Allow MYSQL_PASSWORD env variable
+- Added   : Error message when MYSQL_PASSWORD not set
+- Added   : Role based installation with usage page
+- Updated : Version update ENGINE_VER='1.7.0', BROKER_VER='3.0.3', CENTREON_VER='2.8.4'
 
-- The initial web wizard is now filled with the correct values, no more change is needed.
+- Added   : latest widgets (Live Top 10 CPU, Live Top 10 Memory, Engine Status, Grid Map, HTTP-Loader and tactical overview)
+- Updated : The initial web wizard is now filled with the correct values, no more change is needed.
 
-- Work perfectly in case of upgrade, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD).
+- Works perfectly on upgrades, just rerun this script (don't forget to update your mysql root password in parameter MYSQL_PASSWORD). 
+- WARNING : It is highly recommended to backup all of the centreon installation files (/usr/local/centreon*) and mysql database before upgrades
 
 
 == Versions
 - CLIB_VER='1.4.2'
 - CONNECTOR_VER='1.1.2'
-- ENGINE_VER='1.5.0'
+- ENGINE_VER='1.7.0'
 - PLUGIN_VER='2.1.1'
-- BROKER_VER='2.11.0'
-- CENTREON_VER='2.7.1'
+- BROKER_VER='3.0.3'
+- CENTREON_VER='2.8.4'
 - CLAPI_VER='1.8.0'     *# Not installed anymore (embedded with Centreon Web).* 
 - NAGVIS_MOD_VER='1.1.1'
 
@@ -45,7 +50,6 @@ Tested on Debian Wheezy and Jessie (support fresh install or upgrade).
 
 == Users, groups and passwords
 
-- MYSQL_PASSWORD="YOUR_PASSWORD"     *# Better to update it to something more difficult.*
 - ENGINE_USER='centreon-engine'
 - ENGINE_GROUP='centreon-engine'
 - BROKER_USER='centreon-broker'
@@ -55,14 +59,19 @@ Tested on Debian Wheezy and Jessie (support fresh install or upgrade).
 
 == Usage
 
-Change your vars at the beginning of the script
-Update mysql password (MYSQL_PASSWORD) or restore your root mysql password in case of upgrade
+Setup your mysql root password before running the script :
 
 ----
-sudo ./centreon.sh
+export MYSQL_PASSWORD='YOUR_PASSWORD'
+
+as non root:
+sudo -E bash ./centreon.sh
+as root:
+bash ./centreon.sh
 ----
 
-http://localhost/centreon/
+Once complete, if you've setup your servers role as a central or remote-ui poller you can browse the interface via:
+http://${serverip}/centreon/
 
 == Complete the web wizard install (prefilled with correct values now)
 
